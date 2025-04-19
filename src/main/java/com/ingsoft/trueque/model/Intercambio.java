@@ -1,6 +1,8 @@
 package com.ingsoft.trueque.model;
 
+import com.ingsoft.trueque.model.util.EstadoIntercambio;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -17,6 +19,10 @@ public class Intercambio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private EstadoIntercambio estado;
 
     @ManyToOne
     @JoinColumn(name = "usuario_uno_id", nullable = false)
