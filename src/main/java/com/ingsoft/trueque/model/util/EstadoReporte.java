@@ -1,4 +1,4 @@
-package com.ingsoft.trueque.model;
+package com.ingsoft.trueque.model.util;
 
 public enum EstadoReporte {
     ACTIVO,
