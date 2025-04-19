@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reportes")
@@ -26,4 +29,14 @@ public class Reporte {
     @Enumerated(EnumType.STRING)
     @NotNull
     private EstadoReporte estado;
+
+    @ManyToOne
+    @JoinColumn(name = "articulo_id")
+    private Articulo articulo;
+
+    @Column(name = "fecha_reporte", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime fechaReporte;
+
+
 }
