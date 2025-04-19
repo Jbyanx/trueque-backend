@@ -1,5 +1,7 @@
 package com.ingsoft.trueque.model;
 
+import com.ingsoft.trueque.model.util.CategoriaArticulo;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +27,10 @@ public class Articulo {
     @Enumerated(EnumType.STRING)
     @NotNull
     private CategoriaArticulo categoria;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private EstadoArticulo estado;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
