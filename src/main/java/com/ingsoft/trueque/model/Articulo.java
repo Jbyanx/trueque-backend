@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "articulos")
 @Getter
@@ -39,4 +42,8 @@ public class Articulo {
     @ManyToOne
     @JoinColumn(name = "intercambio_id") // este es el foreign key en la tabla articulo
     private Intercambio intercambio;
+
+    @OneToMany(mappedBy = "articulo", cascade = CascadeType.ALL, targetEntity = Reporte.class)
+    private List<Reporte> reportes = new ArrayList<>();
+
 }
