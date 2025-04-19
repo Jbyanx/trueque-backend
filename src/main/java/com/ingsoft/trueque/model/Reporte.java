@@ -1,5 +1,6 @@
 package com.ingsoft.trueque.model;
 
+import com.ingsoft.trueque.model.util.EstadoReporte;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,5 +25,5 @@ public class Reporte {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private EstadoReporte estadoReporte;
+    private EstadoReporte estado;
 }
