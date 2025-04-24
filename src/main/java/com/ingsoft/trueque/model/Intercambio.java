@@ -4,7 +4,9 @@ import com.ingsoft.trueque.model.util.EstadoIntercambio;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class Intercambio {
     @Enumerated(EnumType.STRING)
     @NotNull
     private EstadoIntercambio estado;
+
+    @CreationTimestamp
+    private LocalDateTime fecha;
 
     @ManyToOne
     @JoinColumn(name = "usuario_uno_id", nullable = false)
