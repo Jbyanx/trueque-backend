@@ -21,7 +21,7 @@ public class Resenha {
     @Max(5)
     private Integer puntuacion;
     @NotBlank
-    String descripcion;
+    private String descripcion;
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = Usuario.class, fetch = FetchType.EAGER)
     private Usuario autor;
