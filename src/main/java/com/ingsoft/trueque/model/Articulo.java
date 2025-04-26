@@ -27,9 +27,9 @@ public class Articulo {
     private String descripcion;
     private String rutaImagen;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private CategoriaArticulo categoria;
+    @OneToOne
+    @JoinColumn(name = "id_categoria")
+    private Categoria categoria;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -37,13 +37,7 @@ public class Articulo {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private Usuario propietario;
 
-    @ManyToOne
-    @JoinColumn(name = "intercambio_id") // este es el foreign key en la tabla articulo
-    private Intercambio intercambio;
-
-    @OneToMany(mappedBy = "articulo", cascade = CascadeType.ALL, targetEntity = Reporte.class)
-    private List<Reporte> reportes = new ArrayList<>();
 
 }
