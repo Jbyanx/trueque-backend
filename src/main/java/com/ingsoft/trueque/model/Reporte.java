@@ -24,6 +24,7 @@ public class Reporte {
     private String descripcion;
 
     @OneToOne(targetEntity = Usuario.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING)
@@ -31,7 +32,7 @@ public class Reporte {
     private EstadoReporte estado;
 
     @ManyToOne
-    @JoinColumn(name = "articulo_id")
+    @JoinColumn(name = "id_articulo")
     private Articulo articulo;
 
     @Column(name = "fecha_reporte", nullable = false, updatable = false)
