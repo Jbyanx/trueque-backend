@@ -19,7 +19,7 @@ public class Resenha {
     private Long id;
     @Min(1)
     @Max(5)
-    private Double puntuacion;
+    private Integer puntuacion;
     @NotBlank
     String descripcion;
 

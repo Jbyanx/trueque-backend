@@ -29,5 +29,5 @@ public class Persona {
     @Size(min = 5, max = 150, message = "El correo debe tener de 5 a 150 caracteres")
     private String correo;
     @NotBlank(message = "La contraseña no puede estar vacia")
-    private String password;
+    private String clave;
 }
