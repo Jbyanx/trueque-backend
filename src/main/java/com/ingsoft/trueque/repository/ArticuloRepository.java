@@ -1,7 +1,6 @@
 package com.ingsoft.trueque.repository;
 
 import com.ingsoft.trueque.model.Articulo;
-import com.ingsoft.trueque.model.util.CategoriaArticulo;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,7 @@ import java.util.Optional;
 public interface ArticuloRepository extends JpaRepository<Articulo, Long> {
 
     Page<Articulo> findAllByEstado(EstadoArticulo estado, Pageable pageable);
-    Page<Articulo> findAllByCategoria(CategoriaArticulo categoria, Pageable pageable);
+    Page<Articulo> findAllByCategoriaNombre(String categoria, Pageable pageable);
     Optional<Articulo> findByPropietarioNombre(String nombre);
 
 }
