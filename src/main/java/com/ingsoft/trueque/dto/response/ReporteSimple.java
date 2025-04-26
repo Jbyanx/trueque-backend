@@ -7,7 +7,7 @@ import java.io.Serializable;
 public record ReporteSimple(
         Long id,
         String descripcion,
-        EstadoArticulo estado,
+        String estado,
         String autor
 ) implements Serializable {
 }
