@@ -1,7 +1,5 @@
 package com.ingsoft.trueque.dto.response;
 
-import com.ingsoft.trueque.model.util.EstadoArticulo;
-
 import java.io.Serializable;
 
 public record GetArticulo(
