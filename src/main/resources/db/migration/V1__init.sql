@@ -66,9 +66,10 @@ create table resenhas (
 );
 
 create table administradores_reportes_activos (
-                                                  administrador_id bigint not null,
-                                                  reportes_activos_id bigint not null unique
+                                                  id_administrador bigint not null,
+                                                  id_reporte bigint not null
 );
+
 
 -- Foreign Keys
 
@@ -76,10 +77,10 @@ alter table administradores
     add constraint fk_admin_persona foreign key (id) references personas;
 
 alter table administradores_reportes_activos
-    add constraint fk_admin_reportes_admin foreign key (administrador_id) references administradores;
+    add constraint fk_admin_reportes_admin foreign key (id_administrador) references administradores;
 
 alter table administradores_reportes_activos
-    add constraint fk_admin_reportes_reporte foreign key (reportes_activos_id) references reportes;
+    add constraint fk_admin_reportes_reporte foreign key (id_reporte) references reportes;
 
 alter table articulos
     add constraint fk_articulo_categoria foreign key (id_categoria) references categorias;
