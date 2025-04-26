@@ -11,14 +11,12 @@ import java.util.List;
 @Entity
 @Table(name = "usuarios")
 @SuperBuilder
+@NoArgsConstructor
 public class Usuario extends Persona {
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "propietario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private List<Articulo> articuloList = new ArrayList<>();
 
-    public Usuario() {
-
-    }
 }
 

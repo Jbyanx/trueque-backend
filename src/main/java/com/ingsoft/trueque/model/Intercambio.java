@@ -30,18 +30,18 @@ public class Intercambio {
     private LocalDateTime fecha;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_uno_id", nullable = false)
+    @JoinColumn(name = "id_usuario_uno", nullable = false)
     private Usuario usuarioUno;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_dos_id", nullable = false)
+    @JoinColumn(name = "id_usuario_dos", nullable = false)
     private Usuario usuarioDos;
 
-    @OneToMany(mappedBy = "intercambio", targetEntity = Resenha.class, fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<Resenha> resenhaList = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "id_articulo_uno", nullable = false)
+    private Articulo articuloUno;
 
-    @OneToMany(mappedBy = "intercambio",targetEntity = Articulo.class, cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Articulo> articuloList = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "id_articulo_dos", nullable = false)
+    private Articulo articuloDos;
 }
