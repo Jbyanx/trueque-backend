@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ArticuloServiceImpl implements ArticuloService {
@@ -25,12 +26,14 @@ public class ArticuloServiceImpl implements ArticuloService {
     private final ArticuloMapper articuloMapper;
     private final CategoriaRepository categoriaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final FileStorageService fileStorageService;
 
-    public ArticuloServiceImpl(ArticuloRepository articuloRepository, ArticuloMapper articuloMapper, CategoriaRepository categoriaRepository, UsuarioRepository usuarioRepository) {
+    public ArticuloServiceImpl(ArticuloRepository articuloRepository, ArticuloMapper articuloMapper, CategoriaRepository categoriaRepository, UsuarioRepository usuarioRepository, FileStorageService fileStorageService) {
         this.articuloRepository = articuloRepository;
         this.articuloMapper = articuloMapper;
         this.categoriaRepository = categoriaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
     @Override
-    public GetArticulo saveArticulo(SaveArticulo articulo) {
+    public GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen) {
         Categoria categoria = categoriaRepository.getCategoriaById(articulo.idCategoria())
                 .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria "+ articulo.idCategoria()+", no encontrada en BD"));
 
@@ -57,14 +60,20 @@ public class ArticuloServiceImpl implements ArticuloService {
         articuloToSave.setCategoria(categoria);
         articuloToSave.setPropietario(propietario);
 
+        try{
+            if (imagen != null && !imagen.isEmpty()) {
+                String rutaImagen = fileStorageService.guardarImagen(imagen);
+                articuloToSave.setRutaImagen(rutaImagen);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         return articuloMapper.toGetArticulo(articuloRepository.save(articuloToSave));
     }
 
     /***
      * Cambiar nombre, descripcion e imagen del articulo
-     * @param id
-     * @param articulo
-     * @return GetArticulo
      */
     @Override
     @Transactional
