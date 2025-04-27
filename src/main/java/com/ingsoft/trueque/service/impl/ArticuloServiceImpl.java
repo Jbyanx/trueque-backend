@@ -50,10 +50,12 @@ public class ArticuloServiceImpl implements ArticuloService {
 
     @Override
     public GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen) {
-        Categoria categoria = categoriaRepository.getCategoriaById(articulo.idCategoria())
+        //Categoria categoria = categoriaRepository.getCategoriaById(articulo.idCategoria())
+        Categoria categoria = categoriaRepository.getCategoriaById(1L)
                 .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria "+ articulo.idCategoria()+", no encontrada en BD"));
 
-        Usuario propietario = usuarioRepository.getUsuarioById(articulo.idPropietario())
+        //Usuario propietario = usuarioRepository.getUsuarioById(articulo.idPropietario())
+        Usuario propietario = usuarioRepository.getUsuarioById(1L)
                 .orElseThrow(() -> new UsuarioNotFoundException("Error al guardar el articulo, usuario con id "+articulo.idPropietario()+", no encontrado en BD"));
 
         Articulo articuloToSave = articuloMapper.toArticulo(articulo);
