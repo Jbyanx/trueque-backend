@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ArticuloService {
     Page<GetArticulo> getAllArticulos(Pageable pageable);
-    GetArticulo getArticulosById(Long id);
+    GetArticulo getArticuloById(Long id);
     GetArticulo saveArticulo(SaveArticulo articulo);
     GetArticulo updateArticuloById(Long id, SaveArticulo articulo);
     void deleteArticuloById(Long id);
