@@ -10,6 +10,6 @@ public interface ArticuloService {
     Page<GetArticulo> getAllArticulos(Pageable pageable);
     GetArticulo getArticuloById(Long id);
     GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen);
-    GetArticulo updateArticuloById(Long id, SaveArticulo articulo);
+    GetArticulo updateArticuloById(Long id, SaveArticulo articulo, MultipartFile imagen);
     void deleteArticuloById(Long id);
 }
