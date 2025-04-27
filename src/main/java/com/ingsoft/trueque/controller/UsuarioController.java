@@ -10,13 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-
 
 @RestController
-@RequestMapping("/administradores")
+@RequestMapping("/usuarios")
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioService usuarioService;
@@ -29,16 +25,6 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<GetUsuario> getUsuarioById(@PathVariable Long id){
         return ResponseEntity.ok(usuarioService.getUsuarioById(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<GetUsuario> saveUsuario(@RequestBody @Valid SaveUsuario usuario){
-        GetUsuario usuarioSaved = usuarioService.saveUsuario(usuario);
-        URI createdUsuario = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(usuarioSaved.id())
-                .toUri();
-        return ResponseEntity.created(createdUsuario).body(usuarioSaved);
     }
 
     @PutMapping("/{id}")
