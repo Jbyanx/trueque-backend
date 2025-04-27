@@ -3,6 +3,7 @@ package com.ingsoft.trueque.controller;
 import com.ingsoft.trueque.dto.request.SaveArticulo;
 import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.service.ArticuloService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 
@@ -21,6 +21,7 @@ import java.net.URI;
 public class ArticuloController {
     private final ArticuloService articuloService;
 
+    @GetMapping
     public ResponseEntity<Page<GetArticulo>> getAllArticulos(Pageable pageable){
         return ResponseEntity.ok(articuloService.getAllArticulos(pageable));
     }
