@@ -77,14 +77,14 @@ public class ArticuloServiceImpl implements ArticuloService {
      */
     @Override
     @Transactional
-    public GetArticulo updateArticuloById(Long id, SaveArticulo articulo) {
+    public GetArticulo updateArticuloById(Long id, SaveArticulo articulo, MultipartFile file) {
         Articulo articuloBd = articuloRepository.findById(id)
                 .orElseThrow(() -> new ArticuloNotFoundException("Error al buscar el Articulo con id "+id+", no encontrado en BD"));
-        updateArticulo(articuloBd, articulo);
+        updateArticulo(articuloBd, articulo, file);
         return articuloMapper.toGetArticulo(articuloRepository.save(articuloBd));
     }
 
-    private void updateArticulo(Articulo articuloBd, SaveArticulo articulo) {
+    private void updateArticulo(Articulo articuloBd, SaveArticulo articulo, MultipartFile file) {
         if(StringUtils.hasText(articulo.nombre())){
             articuloBd.setNombre(articulo.nombre());
         }
@@ -93,6 +93,14 @@ public class ArticuloServiceImpl implements ArticuloService {
         }
         if(StringUtils.hasText(articulo.rutaImagen())){
             articuloBd.setRutaImagen(articulo.rutaImagen());
+        }
+        try {
+            if (file != null && !file.isEmpty()) {
+                String rutaImagen = fileStorageService.guardarImagen(file);
+                articuloBd.setRutaImagen(rutaImagen);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
