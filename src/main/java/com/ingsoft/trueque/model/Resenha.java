@@ -24,9 +24,10 @@ public class Resenha {
     private String descripcion;
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = Usuario.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_autor")
     private Usuario autor;
 
     @ManyToOne
-    @JoinColumn(name = "intercambio_id", nullable = false)
+    @JoinColumn(name = "id_intercambio", nullable = false)
     private Intercambio intercambio;
 }

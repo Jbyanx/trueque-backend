@@ -19,7 +19,6 @@ public class Articulo {
     private Long id;
     @NotBlank(message = "El nombre del articulo no debe ir vacio")
     private String nombre;
-    @NotBlank(message = "La descripcion del articulo no debe ir vacio")
     private String descripcion;
     private String rutaImagen;
 
@@ -32,7 +31,7 @@ public class Articulo {
     private EstadoArticulo estado;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "id_usuario")
     private Usuario propietario;
 
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface IntercarmbioRepository extends JpaRepository<Intercambio, Long> {
+public interface IntercambioRepository extends JpaRepository<Intercambio, Long> {
 
     @Query("update Intercambio i set i.estado = ?1")
     @Modifying
