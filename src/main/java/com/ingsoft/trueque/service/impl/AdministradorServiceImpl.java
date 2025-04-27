@@ -63,6 +63,9 @@ public class AdministradorServiceImpl implements AdministradorService {
         if(StringUtils.hasText(admin.apellido())){
             administrador.setApellido(admin.apellido());
         }
+        if(StringUtils.hasText(admin.correo())){
+            administrador.setCorreo(admin.correo());
+        }
     }
 
     @Override
