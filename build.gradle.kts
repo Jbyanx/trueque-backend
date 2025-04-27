@@ -45,11 +45,6 @@ dependencies {
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 
-	// Spring AI (si lo usas)
-	implementation("org.springframework.ai:spring-ai-markdown-document-reader")
-	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-	developmentOnly("org.springframework.ai:spring-ai-spring-boot-docker-compose")
-
 	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
