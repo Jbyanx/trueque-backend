@@ -10,6 +10,8 @@ import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Categoria;
 import com.ingsoft.trueque.model.Usuario;
 import com.ingsoft.trueque.repository.ArticuloRepository;
+import com.ingsoft.trueque.repository.CategoriaRepository;
+import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.ArticuloService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
