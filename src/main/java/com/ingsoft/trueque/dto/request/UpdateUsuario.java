@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
 
-public record UpdateAdministrador(
+public record UpdateUsuario(
         @NotBlank
         String nombre,
         @NotBlank
