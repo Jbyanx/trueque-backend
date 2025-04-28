@@ -39,5 +39,4 @@ public class Reporte {
     @CreationTimestamp
     private LocalDateTime fechaReporte;
 
-
 }

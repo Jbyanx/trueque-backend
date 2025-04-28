@@ -4,17 +4,21 @@ import com.ingsoft.trueque.model.util.EstadoReporte;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serializable;
 
-public record SaveReporte(
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SaveReporte {
         @NotBlank
-        String descripcion,
+        private String descripcion;
         @NotNull @Positive
-        Long idAutor,
-        @NotNull
-        EstadoReporte estado,
+        private Long idAutor;
         @NotNull @Positive
-        Long idArticulo
-) implements Serializable {
+        private Long idArticulo;
 }
