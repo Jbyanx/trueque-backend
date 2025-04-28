@@ -32,7 +32,7 @@ public class AdministradorController {
     }
 
     @PostMapping
-    public ResponseEntity<GetAdministrador> saveAdministrador(@RequestBody @Valid SaveAdministrador administrador){
+    public ResponseEntity<GetAdministrador> saveAdministrador(@ModelAttribute @Valid SaveAdministrador administrador){
         GetAdministrador administradorSaved = administradorService.saveAdministrador(administrador);
         URI createdAdministrador = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -43,7 +43,7 @@ public class AdministradorController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GetAdministrador> updateAdministrador(@PathVariable Long id,
-                                                      @RequestBody @Valid UpdateAdministrador administrador){
+                                                      @ModelAttribute @Valid UpdateAdministrador administrador){
         return ResponseEntity.ok(administradorService.updateAdministradorById(id, administrador));
     }
 

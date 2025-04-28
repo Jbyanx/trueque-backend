@@ -29,7 +29,7 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GetUsuario> updateUsuario(@PathVariable Long id,
-                                                      @RequestBody @Valid UpdateUsuario usuario){
+                                                      @ModelAttribute @Valid UpdateUsuario usuario){
         return ResponseEntity.ok(usuarioService.updateUsuarioById(id, usuario));
     }
 

@@ -52,14 +52,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     private void updateUsuario(Usuario usuarioSaved, UpdateUsuario usuario) {
-        if(StringUtils.hasText(usuario.nombre())){
-            usuarioSaved.setNombre(usuario.nombre());
+        if(StringUtils.hasText(usuario.getNombre())){
+            usuarioSaved.setNombre(usuario.getNombre());
         }
-        if(StringUtils.hasText(usuario.apellido())){
-            usuarioSaved.setApellido(usuario.apellido());
+        if(StringUtils.hasText(usuario.getApellido())){
+            usuarioSaved.setApellido(usuario.getApellido());
         }
-        if(StringUtils.hasText(usuario.correo())){
-            usuarioSaved.setCorreo(usuario.correo());
+        if(StringUtils.hasText(usuario.getCorreo())){
+            usuarioSaved.setCorreo(usuario.getCorreo());
         }
     }
 

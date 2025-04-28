@@ -57,14 +57,14 @@ public class AdministradorServiceImpl implements AdministradorService {
     }
 
     private void updateAdmin(Administrador administrador, UpdateAdministrador admin) {
-        if(StringUtils.hasText(admin.nombre())){
-            administrador.setNombre(admin.nombre());
+        if(StringUtils.hasText(admin.getNombre())){
+            administrador.setNombre(admin.getNombre());
         }
-        if(StringUtils.hasText(admin.apellido())){
-            administrador.setApellido(admin.apellido());
+        if(StringUtils.hasText(admin.getApellido())){
+            administrador.setApellido(admin.getApellido());
         }
-        if(StringUtils.hasText(admin.correo())){
-            administrador.setCorreo(admin.correo());
+        if(StringUtils.hasText(admin.getCorreo())){
+            administrador.setCorreo(admin.getCorreo());
         }
     }
 

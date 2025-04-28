@@ -2,15 +2,22 @@ package com.ingsoft.trueque.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-public record UpdateAdministrador(
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateAdministrador{
         @NotBlank
-        String nombre,
+        private String nombre;
         @NotBlank
-        String apellido,
+        private String apellido;
         @Email
-        String correo
-) implements Serializable {
+        private String correo;
 }
