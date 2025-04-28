@@ -5,8 +5,6 @@ import com.ingsoft.trueque.dto.response.GetResenha;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface ResenhaService {
     Page<GetResenha> getAllResenhas(Pageable pageable);
     GetResenha getResenhaById(Long id);

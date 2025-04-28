@@ -1,6 +1,5 @@
 package com.ingsoft.trueque.controller;
 
-import com.ingsoft.trueque.dto.request.SaveUsuario;
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
 import com.ingsoft.trueque.dto.response.GetUsuario;
 import com.ingsoft.trueque.service.UsuarioService;

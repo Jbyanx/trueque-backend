@@ -18,8 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ResenhaServiceImpl implements ResenhaService {
@@ -44,11 +42,11 @@ public class ResenhaServiceImpl implements ResenhaService {
     @Override
     @Transactional
     public GetResenha saveResenha(SaveResenha resenha) {
-        Intercambio intercambio = intercambioRepository.findById(resenha.idIntercambio())
-                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+resenha.idIntercambio()+", no existe en BD"));
+        Intercambio intercambio = intercambioRepository.findById(resenha.getIdIntercambio())
+                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+resenha.getIdIntercambio()+", no existe en BD"));
 
-        Usuario autor = usuarioRepository.findById(resenha.idAutor())
-                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+resenha.idAutor()+", no existe en BD"));
+        Usuario autor = usuarioRepository.findById(resenha.getIdAutor())
+                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+resenha.getIdAutor()+", no existe en BD"));
 
         Resenha resenhaToSave = resenhaMapper.toResenha(resenha);
         resenhaToSave.setAutor(autor);
@@ -71,11 +69,11 @@ public class ResenhaServiceImpl implements ResenhaService {
     }
 
     private void updateResenha(Resenha resenhaSaved, SaveResenha resenha) {
-        if(StringUtils.hasText(resenha.descripcion())){
-            resenhaSaved.setDescripcion(resenha.descripcion());
+        if(StringUtils.hasText(resenha.getDescripcion())){
+            resenhaSaved.setDescripcion(resenha.getDescripcion());
         }
-        if(resenha.puntuacion() != null && resenha.puntuacion() > 0 && resenha.puntuacion()<= 5){
-            resenhaSaved.setPuntuacion(resenha.puntuacion());
+        if(resenha.getPuntuacion() != null && resenha.getPuntuacion() > 0 && resenha.getPuntuacion()<= 5){
+            resenhaSaved.setPuntuacion(resenha.getPuntuacion());
         }
     }
 
