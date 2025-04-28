@@ -3,19 +3,26 @@ package com.ingsoft.trueque.dto.request;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-public record SaveArticulo(
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SaveArticulo{
         @NotBlank
-        String nombre,
-        String descripcion,
-        String rutaImagen,
+        private String nombre;
+        private String descripcion;
+        private String rutaImagen;
         @NotNull
-        Long idCategoria,
+        private Long idCategoria;
         @NotNull
-        EstadoArticulo estado,
+        private EstadoArticulo estado;
         @NotNull
-        Long idPropietario
-) implements Serializable {
+        private Long idPropietario;
 }

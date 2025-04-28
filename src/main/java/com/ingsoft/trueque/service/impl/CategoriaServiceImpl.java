@@ -53,11 +53,11 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     private void updateCategoria(Categoria categoriaAtual, SaveCategoria categoria) {
-        if(StringUtils.hasText(categoria.nombre())){
-            categoriaAtual.setNombre(categoria.nombre());
+        if(StringUtils.hasText(categoria.getNombre())){
+            categoriaAtual.setNombre(categoria.getNombre());
         }
-        if(StringUtils.hasText(categoria.descripcion())){
-            categoriaAtual.setDescripcion(categoria.descripcion());
+        if(StringUtils.hasText(categoria.getDescripcion())){
+            categoriaAtual.setDescripcion(categoria.getDescripcion());
         }
     }
 

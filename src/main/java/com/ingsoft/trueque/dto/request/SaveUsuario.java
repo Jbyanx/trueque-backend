@@ -2,17 +2,24 @@ package com.ingsoft.trueque.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-public record SaveUsuario(
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SaveUsuario{
         @NotBlank
-        String nombre,
+        private String nombre;
         @NotBlank
-        String apellido,
+        private String apellido;
         @Email
-        String correo,
+        private String correo;
         @NotBlank
-        String clave
-) implements Serializable {
+        private String clave;
 }

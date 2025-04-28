@@ -52,11 +52,11 @@ public class ArticuloServiceImpl implements ArticuloService {
     public GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen) {
         //Categoria categoria = categoriaRepository.getCategoriaById(articulo.idCategoria())
         Categoria categoria = categoriaRepository.getCategoriaById(1L)
-                .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria "+ articulo.idCategoria()+", no encontrada en BD"));
+                .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria "+ articulo.getIdCategoria()+", no encontrada en BD"));
 
         //Usuario propietario = usuarioRepository.getUsuarioById(articulo.idPropietario())
         Usuario propietario = usuarioRepository.getUsuarioById(1L)
-                .orElseThrow(() -> new UsuarioNotFoundException("Error al guardar el articulo, usuario con id "+articulo.idPropietario()+", no encontrado en BD"));
+                .orElseThrow(() -> new UsuarioNotFoundException("Error al guardar el articulo, usuario con id "+articulo.getIdPropietario()+", no encontrado en BD"));
 
         Articulo articuloToSave = articuloMapper.toArticulo(articulo);
         articuloToSave.setCategoria(categoria);
@@ -87,14 +87,14 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
     private void updateArticulo(Articulo articuloBd, SaveArticulo articulo, MultipartFile file) {
-        if(StringUtils.hasText(articulo.nombre())){
-            articuloBd.setNombre(articulo.nombre());
+        if(StringUtils.hasText(articulo.getNombre())){
+            articuloBd.setNombre(articulo.getNombre());
         }
-        if(StringUtils.hasText(articulo.descripcion())){
-            articuloBd.setDescripcion(articulo.descripcion());
+        if(StringUtils.hasText(articulo.getDescripcion())){
+            articuloBd.setDescripcion(articulo.getDescripcion());
         }
-        if(StringUtils.hasText(articulo.rutaImagen())){
-            articuloBd.setRutaImagen(articulo.rutaImagen());
+        if(StringUtils.hasText(articulo.getRutaImagen())){
+            articuloBd.setRutaImagen(articulo.getRutaImagen());
         }
         try {
             if (file != null && !file.isEmpty()) {

@@ -31,7 +31,7 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<GetCategoria> saveCategoria(@RequestBody @Valid SaveCategoria categoria){
+    public ResponseEntity<GetCategoria> saveCategoria(@ModelAttribute @Valid SaveCategoria categoria){
         GetCategoria categoriaSaved = categoriaService.saveCategoria(categoria);
         URI createdCategoria = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
