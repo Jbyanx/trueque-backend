@@ -42,7 +42,7 @@ public class CategoriaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GetCategoria> updateCategoria(@PathVariable Long id,
-                                                      @RequestBody @Valid SaveCategoria categoria){
+                                                      @ModelAttribute @Valid SaveCategoria categoria){
         return ResponseEntity.ok(categoriaService.updateCatgoriaById(id, categoria));
     }
 

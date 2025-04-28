@@ -1,18 +1,23 @@
 package com.ingsoft.trueque.dto.request;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serializable;
-
-public record SaveResenha(
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SaveResenha {
         @Min(1)
         @Max(5)
-        Integer puntuacion,
+        private Integer puntuacion;
         @NotBlank
-        String descripcion,
+        private String descripcion;
         @NotNull @Positive
-        Long idAutor,
+        private Long idAutor;
         @NotNull @Positive
-        Long idIntercambio
-) implements Serializable {
+        private Long idIntercambio;
 }
