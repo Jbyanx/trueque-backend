@@ -32,7 +32,7 @@ public class IntercambioServiceImpl implements IntercambioService {
     @Override
     public List<GetIntercambio> getIntercambiosByUsuarioIdAndEstado(Long id, EstadoIntercambio estadoIntercambio) {
         return intercambioMapper.toGetIntercambioList(
-                intercambioRepository.historialIntercambiosRealizadosByIdUsuario(id, estadoIntercambio)
+                intercambioRepository.historialIntercambiosByIdUsuarioAndEstado(id, estadoIntercambio)
         );
     }
 

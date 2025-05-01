@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 public interface IntercambioRepository extends JpaRepository<Intercambio, Long> {
@@ -15,4 +17,6 @@ public interface IntercambioRepository extends JpaRepository<Intercambio, Long> 
     @Modifying
     Intercambio cambiarEstadoDelIntercambio(EstadoIntercambio estado);
 
+    @Query("select i from Intercambio i where i.usuarioUno = ?1 or i.usuarioDos = ?1 and i.estado = ?2")
+    List<Intercambio> historialIntercambiosByIdUsuarioAndEstado(Long idUsuario, EstadoIntercambio estado);
 }
