@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 public interface AdministradorService {
     Page<GetAdministrador> getAllAdministradores(Pageable pageable);
     GetAdministrador getAdministradorById(Long id);
-    GetAdministrador saveAdministrador(SaveAdministrador admin);
     GetAdministrador updateAdministradorById(Long id, UpdateAdministrador admin);
     void deleteAdministradorById(Long id);
 }

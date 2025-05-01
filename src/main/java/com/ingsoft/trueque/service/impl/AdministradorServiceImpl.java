@@ -35,16 +35,7 @@ public class AdministradorServiceImpl implements AdministradorService {
     public GetAdministrador getAdministradorById(Long id) {
         return administradorRepository.findById(id)
                 .map(administradorMapper::toGetAdministrador)
-                .orElseThrow(() -> new AdministradorNotFoundException("Error al obtener, el administrador con id "+id+ "No existe en BD"));
-    }
-
-    @Override
-    public GetAdministrador saveAdministrador(SaveAdministrador admin) {
-        return administradorMapper.toGetAdministrador(
-                administradorRepository.save(
-                    administradorMapper.toAdministrador(admin)
-                )
-        );
+                .orElseThrow(() -> new AdministradorNotFoundException("Error al obtener, el administrador con id " + id + "No existe en BD"));
     }
 
     @Override
