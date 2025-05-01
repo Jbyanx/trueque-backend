@@ -1,5 +1,6 @@
 package com.ingsoft.trueque.controller;
 
+import com.ingsoft.trueque.dto.request.ArticuloFiltroRequest;
 import com.ingsoft.trueque.dto.request.SaveArticulo;
 import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.service.ArticuloService;
@@ -14,7 +15,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-
 @RestController
 @RequestMapping("/articulos")
 @RequiredArgsConstructor
@@ -22,8 +22,9 @@ public class ArticuloController {
     private final ArticuloService articuloService;
 
     @GetMapping
-    public ResponseEntity<Page<GetArticulo>> getAllArticulos(Pageable pageable){
-        return ResponseEntity.ok(articuloService.getAllArticulos(pageable));
+    public ResponseEntity<Page<GetArticulo>> getAllArticulos(@ModelAttribute ArticuloFiltroRequest filtros,
+                                                             Pageable pageable){
+        return ResponseEntity.ok(articuloService.getAllArticulos(filtros, pageable));
     }
 
     @GetMapping("/{id}")

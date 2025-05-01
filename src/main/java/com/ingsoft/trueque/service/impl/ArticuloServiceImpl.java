@@ -1,5 +1,6 @@
 package com.ingsoft.trueque.service.impl;
 
+import com.ingsoft.trueque.dto.request.ArticuloFiltroRequest;
 import com.ingsoft.trueque.dto.request.SaveArticulo;
 import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.exception.ArticuloNotFoundException;
@@ -9,16 +10,21 @@ import com.ingsoft.trueque.mapper.ArticuloMapper;
 import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Categoria;
 import com.ingsoft.trueque.model.Usuario;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.CategoriaRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.ArticuloService;
+import com.ingsoft.trueque.specification.ArticuloSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
 
 @Service
 public class ArticuloServiceImpl implements ArticuloService {
@@ -37,8 +43,15 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
     @Override
-    public Page<GetArticulo> getAllArticulos(Pageable pageable) {
-        return articuloRepository.findAll(pageable).map(articuloMapper::toGetArticulo);
+    public Page<GetArticulo> getAllArticulos(ArticuloFiltroRequest filtroRequest,
+                                             Pageable pageable) {
+
+        Specification<Articulo> spec = Specification
+                .where(ArticuloSpecification.conCategoria(filtroRequest.categoria()))
+                .and(ArticuloSpecification.conEstado(filtroRequest.estado()))
+                .and(ArticuloSpecification.conNombre(filtroRequest.nombre()));
+
+        return articuloRepository.findAll(spec, pageable).map(articuloMapper::toGetArticulo);
     }
 
     @Override
