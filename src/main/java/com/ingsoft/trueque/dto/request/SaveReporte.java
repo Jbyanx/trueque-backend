@@ -19,6 +19,4 @@ public class SaveReporte {
         private String descripcion;
         @NotNull @Positive
         private Long idAutor;
-        @NotNull @Positive
-        private Long idArticulo;
 }

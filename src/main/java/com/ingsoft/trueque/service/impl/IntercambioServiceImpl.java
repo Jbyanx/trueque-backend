@@ -5,6 +5,8 @@ import com.ingsoft.trueque.dto.response.GetIntercambio;
 import com.ingsoft.trueque.exception.IntercambioNotFoundException;
 import com.ingsoft.trueque.mapper.IntercambioMapper;
 import com.ingsoft.trueque.model.Intercambio;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
+import com.ingsoft.trueque.model.util.EstadoIntercambio;
 import com.ingsoft.trueque.repository.IntercambioRepository;
 import com.ingsoft.trueque.service.IntercambioService;
 import jakarta.transaction.Transactional;
@@ -12,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,13 @@ public class IntercambioServiceImpl implements IntercambioService {
     }
 
     @Override
+    public List<GetIntercambio> getIntercambiosByUsuarioIdAndEstado(Long id, EstadoIntercambio estadoIntercambio) {
+        return intercambioMapper.toGetIntercambioList(
+                intercambioRepository.historialIntercambiosByIdUsuarioAndEstado(id, estadoIntercambio)
+        );
+    }
+
+    @Override
     public GetIntercambio getIntercambioById(Long id) {
         return intercambioRepository.findById(id)
                 .map(intercambioMapper::toGetIntercambio)
@@ -34,33 +45,41 @@ public class IntercambioServiceImpl implements IntercambioService {
 
     @Override
     public GetIntercambio saveIntercambio(SaveIntercambio intercambio) {
+        Intercambio intercambioToSave = intercambioMapper.toIntercambio(intercambio);
+
+        // El propietario del articulo dos no debe ser el propietario del articulo uno
+        if (intercambioToSave.getArticuloDos().getPropietario().equals(
+                intercambioToSave.getArticuloUno().getPropietario())) {
+            throw new RuntimeException("No puedes ofrecer un artículo por otro tuyo.");
+        }
+
+        if (intercambioToSave.getArticuloDos().getEstado() != EstadoArticulo.DISPONIBLE) {
+            throw new RuntimeException("El artículo solicitado no está disponible para el intercambio.");
+        }
+
+        intercambioToSave.setEstado(EstadoIntercambio.SOLICITADO);
+
         return intercambioMapper.toGetIntercambio(
-                intercambioRepository.save(
-                        intercambioMapper.toIntercambio(intercambio)
-                )
+                intercambioRepository.save(intercambioToSave)
         );
     }
 
-    /***
-     * Este metodo solo cambia el estado
-     * @param id
-     * @param intercambio
-     * @return
-     */
+
+
     @Override
     @Transactional
-    public GetIntercambio updateIntercambioById(Long id, SaveIntercambio intercambio) {
+    public GetIntercambio updateEstadoById(Long id, EstadoIntercambio estadoIntercambio) {
         Intercambio intercambioToUpdate = intercambioRepository.findById(id)
                 .orElseThrow(() -> new IntercambioNotFoundException("Error al buscar!, el intercambio con id "+ id + " no existe en BD."));
-        updateIntercambio(intercambioToUpdate, intercambio);
+        updateIntercambio(intercambioToUpdate, estadoIntercambio);
         return intercambioMapper.toGetIntercambio(
                 intercambioRepository.save(intercambioToUpdate)
         );
     }
 
-    private void updateIntercambio(Intercambio intercambioToUpdate, SaveIntercambio intercambio) {
-        if(intercambio.estadoIntercambio()!=null){
-            intercambioToUpdate.setEstado(intercambio.estadoIntercambio());
+    private void updateIntercambio(Intercambio intercambioToUpdate, EstadoIntercambio estadoIntercambio) {
+        if(estadoIntercambio != null){
+            intercambioToUpdate.setEstado(estadoIntercambio);
         }
     }
 

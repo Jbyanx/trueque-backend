@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Positive;
 import java.io.Serializable;
 
 public record SaveIntercambio(
-        @NotNull
-        EstadoIntercambio estadoIntercambio,
         @NotNull @Positive
         Long idUsuarioUno,
         @NotNull @Positive

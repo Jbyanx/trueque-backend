@@ -2,6 +2,7 @@ package com.ingsoft.trueque.controller;
 
 import com.ingsoft.trueque.dto.request.SaveIntercambio;
 import com.ingsoft.trueque.dto.response.GetIntercambio;
+import com.ingsoft.trueque.model.util.EstadoIntercambio;
 import com.ingsoft.trueque.service.IntercambioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 
 @RestController
@@ -30,6 +32,11 @@ public class IntercambioController {
         return ResponseEntity.ok(intercambioService.getIntercambioById(id));
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List> getIntercambiosByUsuarioIdAndEstado(@PathVariable Long usuarioId,@RequestParam EstadoIntercambio estado){
+        return ResponseEntity.ok(intercambioService.getIntercambiosByUsuarioIdAndEstado(usuarioId, estado));
+    }
+
     @PostMapping
     public ResponseEntity<GetIntercambio> saveIntercambio(@ModelAttribute @Valid SaveIntercambio intercambio){
         GetIntercambio intercambioSaved = intercambioService.saveIntercambio(intercambio);
@@ -40,17 +47,10 @@ public class IntercambioController {
         return ResponseEntity.created(createdIntercambio).body(intercambioSaved);
     }
 
-    /***
-     * Este metodo solo cambia el estado que esta dentro del dto de intercambio, y el resto de
-     * parametros son obligatorios pero no se modifican
-     * @param id
-     * @param intercambio
-     * @return
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<GetIntercambio> updateIntercambio(@PathVariable Long id,
-                                                      @ModelAttribute @Valid SaveIntercambio intercambio){
-        return ResponseEntity.ok(intercambioService.updateIntercambioById(id, intercambio));
+    public ResponseEntity<GetIntercambio> updateEstado(@PathVariable Long id,
+                                                      @RequestParam EstadoIntercambio estadoIntercambio){
+        return ResponseEntity.ok(intercambioService.updateEstadoById(id, estadoIntercambio));
     }
 
     @DeleteMapping("/{id}")

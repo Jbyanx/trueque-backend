@@ -16,7 +16,7 @@ import java.net.URI;
 public class AuthController {
     private final UsuarioService usuarioService;
 
-    @PostMapping("/register")
+    @PostMapping("/registrar")
     public ResponseEntity<GetUsuario> register(@ModelAttribute SaveUsuario saveUsuario) {
         GetUsuario usuarioSaved = usuarioService.saveUsuario(saveUsuario);
         URI createdUsuario = ServletUriComponentsBuilder.fromCurrentRequest()
