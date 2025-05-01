@@ -10,7 +10,7 @@ import java.util.List;
 public interface ReporteService {
     Page<GetReporte> getAllReportes(Pageable pageable);
     GetReporte getReporteById(Long id);
-    GetReporte saveReporte(SaveReporte reporte);
+    GetReporte saveReporte(Long idArticulo, SaveReporte reporte);
     GetReporte updateReporteById(Long id, SaveReporte reporte);
     void deleteReporteById(Long id);
 }

@@ -2,10 +2,13 @@ package com.ingsoft.trueque.service.impl;
 
 import com.ingsoft.trueque.dto.request.SaveReporte;
 import com.ingsoft.trueque.dto.response.GetReporte;
+import com.ingsoft.trueque.exception.ArticuloNotFoundException;
 import com.ingsoft.trueque.exception.ReporteNotFoundException;
 import com.ingsoft.trueque.mapper.ReporteMapper;
+import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Reporte;
 import com.ingsoft.trueque.model.util.EstadoReporte;
+import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.ReporteRepository;
 import com.ingsoft.trueque.service.ReporteService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.util.StringUtils;
 public class ReporteServiceImpl implements ReporteService {
     private final ReporteRepository reporteRepository;
     private final ReporteMapper reporteMapper;
+    private final ArticuloRepository articuloRepository;
 
     @Override
     public Page<GetReporte> getAllReportes(Pageable pageable) {
@@ -35,10 +39,15 @@ public class ReporteServiceImpl implements ReporteService {
     }
 
     @Override
-    public GetReporte saveReporte(SaveReporte reporte) {
+    public GetReporte saveReporte(Long idArticulo, SaveReporte reporte) {
         Reporte reporteToSave = reporteMapper.toReporte(reporte);
 
+        Articulo articulo = articuloRepository.findById(idArticulo)
+                        .orElseThrow(() -> new ArticuloNotFoundException("Error al reportar el articulo con id "+idArticulo+", este articulo no se encuentra en BD"));
+
         reporteToSave.setEstado(EstadoReporte.ACTIVO);
+        reporteToSave.setArticulo(articulo);
+        //todo reporteToSave.setUsuario(usuario que se encuentra loggeado);
 
         return reporteMapper.toGetReporte(
                 reporteRepository.save(

@@ -30,9 +30,9 @@ public class ReporteController {
         return ResponseEntity.ok(reporteService.getReporteById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<GetReporte> saveReporte(@ModelAttribute @Valid SaveReporte reporte){
-        GetReporte reporteSaved = reporteService.saveReporte(reporte);
+    @PostMapping("/articulos/{idArticulo}")
+    public ResponseEntity<GetReporte> saveReporte(@PathVariable Long idArticulo , @ModelAttribute @Valid SaveReporte reporte){
+        GetReporte reporteSaved = reporteService.saveReporte(idArticulo, reporte);
         URI createdReporte = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(reporteSaved.id())
