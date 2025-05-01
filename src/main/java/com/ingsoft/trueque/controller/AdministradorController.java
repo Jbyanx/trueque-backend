@@ -22,23 +22,13 @@ public class AdministradorController {
     private final AdministradorService administradorService;
 
     @GetMapping
-    public ResponseEntity<Page<GetAdministrador>> getAllAdministradores(Pageable pageable){
+    public ResponseEntity<Page<GetAdministrador>> getAllAdministradores(Pageable pageable) {
         return ResponseEntity.ok(administradorService.getAllAdministradores(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetAdministrador> getAdministradorById(@PathVariable Long id){
+    public ResponseEntity<GetAdministrador> getAdministradorById(@PathVariable Long id) {
         return ResponseEntity.ok(administradorService.getAdministradorById(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<GetAdministrador> saveAdministrador(@ModelAttribute @Valid SaveAdministrador administrador){
-        GetAdministrador administradorSaved = administradorService.saveAdministrador(administrador);
-        URI createdAdministrador = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(administradorSaved.id())
-                .toUri();
-        return ResponseEntity.created(createdAdministrador).body(administradorSaved);
     }
 
     @PutMapping("/{id}")
