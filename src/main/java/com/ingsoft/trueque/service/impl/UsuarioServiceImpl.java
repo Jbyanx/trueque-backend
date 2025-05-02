@@ -2,10 +2,15 @@ package com.ingsoft.trueque.service.impl;
 
 import com.ingsoft.trueque.dto.request.SaveUsuario;
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
+import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.dto.response.GetUsuario;
 import com.ingsoft.trueque.exception.UsuarioNotFoundException;
+import com.ingsoft.trueque.mapper.ArticuloMapper;
 import com.ingsoft.trueque.mapper.UsuarioMapper;
+import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Usuario;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
+import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +24,8 @@ import org.springframework.util.StringUtils;
 public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final ArticuloRepository articuloRepository;
+    private final ArticuloMapper articuloMapper;
 
 
     @Override
@@ -68,5 +75,16 @@ public class UsuarioServiceImpl implements UsuarioService {
         if(usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);
         }
+    }
+
+    @Override
+    public Page<GetArticulo> getArticulosByUsuario(Long idUsuario, EstadoArticulo estadoArticulo, Pageable pageable) {
+        if(estadoArticulo == null){
+            //trae todos los articulos
+            return articuloRepository.getArticulosByPropietarioId(idUsuario, pageable).map(articuloMapper::toGetArticulo);
+        } if(estadoArticulo.equals(EstadoArticulo.INTERCAMBIADO)){
+            return articuloRepository.findArticulosIntercambiadosPorUsuario(idUsuario, pageable).map(articuloMapper::toGetArticulo);
+        }
+        return articuloRepository.getArticulosByPropietarioIdAndEstado(idUsuario, pageable, estadoArticulo).map(articuloMapper::toGetArticulo);
     }
 }
