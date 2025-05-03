@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,14 +33,44 @@ public class IntercambioController {
         return ResponseEntity.ok(intercambioService.getIntercambioById(id));
     }
 
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List> getIntercambiosByUsuarioIdAndEstado(@PathVariable Long usuarioId,@RequestParam EstadoIntercambio estado){
+    /***
+     * Mediante esta funcion se consultan los intercambios por idUsuario, y con el parametro EstadoIntercambio
+     * enviamos que estados queremos consultar, si el parametro no se envia los trae todos
+     *
+     * @param usuarioId
+     * @param estado
+     * @return
+     */
+
+    @GetMapping("/usuarios/{usuarioId}")
+    public ResponseEntity<List<GetIntercambio>> getIntercambiosByUsuarioIdAndEstado(@PathVariable Long usuarioId,
+                                                                    @RequestParam(required = false) EstadoIntercambio estado){
         return ResponseEntity.ok(intercambioService.getIntercambiosByUsuarioIdAndEstado(usuarioId, estado));
     }
 
+    @PutMapping("/usuarios/{usuarioId}/{intercambioId}/aceptar")
+    public ResponseEntity<GetIntercambio> acceptIntercambio(@PathVariable Long usuarioId, @PathVariable Long intercambioId){
+        GetIntercambio intercambioAceptado = intercambioService.aceptarIntercambio(usuarioId,intercambioId, EstadoIntercambio.ACEPTADO);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/intercambios/{id}")
+                .buildAndExpand(intercambioId)
+                .toUri();
+        return ResponseEntity.status(HttpStatus.OK).location(location).build();
+    }
+
+    @PutMapping("/usuarios/{usuarioId}/{intercambioId}/rechazar")
+    public ResponseEntity<GetIntercambio> rejectIntercambio(@PathVariable Long usuarioId, @PathVariable Long intercambioId){
+        GetIntercambio intercambioRechazado = intercambioService.rechazarIntercambio(usuarioId,intercambioId, EstadoIntercambio.RECHAZADO);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/intercambios/{id}")
+                .buildAndExpand(intercambioId)
+                .toUri();
+        return ResponseEntity.status(HttpStatus.OK).location(location).build();
+    }
+
     @PostMapping
-    public ResponseEntity<GetIntercambio> saveIntercambio(@ModelAttribute @Valid SaveIntercambio intercambio){
-        GetIntercambio intercambioSaved = intercambioService.saveIntercambio(intercambio);
+    public ResponseEntity<GetIntercambio> solicitarIntercambio(@ModelAttribute @Valid SaveIntercambio intercambio){
+        GetIntercambio intercambioSaved = intercambioService.solicitarIntercambio(intercambio);
         URI createdIntercambio = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(intercambioSaved.id())
