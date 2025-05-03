@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 public interface ResenhaService {
     Page<GetResenha> getAllResenhas(Pageable pageable);
     GetResenha getResenhaById(Long id);
-    GetResenha saveResenha(SaveResenha resenha);
+    GetResenha saveResenha(Long idIntercambio, SaveResenha resenha);
     GetResenha updateResenhaById(Long id, SaveResenha resenha);
     void deleteResenhaById(Long id);
 }

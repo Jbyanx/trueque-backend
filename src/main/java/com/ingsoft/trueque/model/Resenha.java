@@ -25,7 +25,11 @@ public class Resenha {
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = Usuario.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "id_autor")
-    private Usuario autor;
+    private Usuario usuarioCalificante;
+
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = Usuario.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario_calificado")
+    private Usuario usuarioCalificado;
 
     @ManyToOne
     @JoinColumn(name = "id_intercambio", nullable = false)

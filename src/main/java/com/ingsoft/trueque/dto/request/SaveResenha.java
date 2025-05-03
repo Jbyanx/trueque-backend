@@ -17,7 +17,9 @@ public class SaveResenha {
         @NotBlank
         private String descripcion;
         @NotNull @Positive
-        private Long idAutor;
+        private Long idUsuarioCalificante;
+        @NotNull @Positive
+        private Long idUsuarioCalificado;
         @NotNull @Positive
         private Long idIntercambio;
 }

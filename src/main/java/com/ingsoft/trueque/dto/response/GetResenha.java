@@ -6,7 +6,8 @@ public record GetResenha(
         Long id,
         Integer puntuacion,
         String descripcion,
-        Long  idAutor,
+        Long idUsuarioCalificante,
+        Long idUsuarioCalificado,
         Long idIntercambio
 ) implements Serializable {
 }
