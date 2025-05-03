@@ -19,7 +19,6 @@ public interface ReporteMapper {
 
 
     @Mapping(target = "usuario.id", source = "idAutor")
-    @Mapping(target = "articulo.id", source = "idArticulo")
     Reporte toReporte(SaveReporte saveReporte);
 
     List<GetReporte> toGetReporteList(List<Reporte> reportes);

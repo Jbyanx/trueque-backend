@@ -16,7 +16,6 @@ public interface IntercambioMapper {
     @Mapping(target = "articuloDos", source = "articuloDos.nombre")
     GetIntercambio toGetIntercambio(Intercambio intercambio);
 
-    @Mapping(target = "estado", source = "estadoIntercambio")
     @Mapping(target = "usuarioUno.id", source = "idUsuarioUno")
     @Mapping(target = "usuarioDos.id", source = "idUsuarioDos")
     @Mapping(target = "articuloUno.id", source = "idArticuloUno")

@@ -5,5 +5,6 @@ public enum EstadoIntercambio {
     ACEPTADO,
     REALIZADO,
     EN_NEGOCIACION,
+    RECHAZADO,
     CANCELADO
 }

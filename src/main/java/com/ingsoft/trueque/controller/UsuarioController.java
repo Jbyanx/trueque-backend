@@ -1,7 +1,9 @@
 package com.ingsoft.trueque.controller;
 
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
+import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.dto.response.GetUsuario;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioService usuarioService;
+
+    @GetMapping("/{idUsuario}/articulos")
+    public ResponseEntity<Page<GetArticulo>> getArticulosByUsuario(@PathVariable Long idUsuario,
+                                                                   @RequestParam(required = false) EstadoArticulo estadoArticulo,
+                                                                   Pageable pageable) {
+        return ResponseEntity.ok(usuarioService.getArticulosByUsuario(idUsuario, estadoArticulo, pageable));
+    }
 
     @GetMapping
     public ResponseEntity<Page<GetUsuario>> getAllUsuarios(Pageable pageable){
