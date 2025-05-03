@@ -68,6 +68,12 @@ public class IntercambioController {
         return ResponseEntity.status(HttpStatus.OK).location(location).build();
     }
 
+    @PutMapping("/usuarios/{usuarioId}/{intercambioId}/cancelar")
+    public ResponseEntity<GetIntercambio> cancelIntercambio(@PathVariable Long usuarioId, @PathVariable Long intercambioId){
+        GetIntercambio intercambioCancelado = intercambioService.cancelarIntercambio(usuarioId,intercambioId, EstadoIntercambio.CANCELADO);
+        return ResponseEntity.ok(intercambioCancelado);
+    }
+
     @PostMapping
     public ResponseEntity<GetIntercambio> solicitarIntercambio(@ModelAttribute @Valid SaveIntercambio intercambio){
         GetIntercambio intercambioSaved = intercambioService.solicitarIntercambio(intercambio);

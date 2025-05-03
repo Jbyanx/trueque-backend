@@ -19,4 +19,6 @@ public interface IntercambioService {
     GetIntercambio aceptarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio);
 
     GetIntercambio rechazarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio);
+
+    GetIntercambio cancelarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio);
 }

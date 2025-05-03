@@ -126,4 +126,19 @@ public class IntercambioServiceImpl implements IntercambioService {
         updateEstadoIntercambio(intercambio, estadoIntercambio);
         return intercambioMapper.toGetIntercambio(intercambio);
     }
+
+    @Transactional
+    @Override
+    public GetIntercambio cancelarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio) {
+        Intercambio intercambio = intercambioRepository.findById(intercambioId)
+                .orElseThrow(() -> new IntercambioNotFoundException("Error al cancelar el intercambio," +
+                        "con id "+intercambioId+" no existe en BD."));
+
+        if(!(intercambio.getUsuarioUno().getId().equals(usuarioId) || intercambio.getUsuarioDos().getId().equals(usuarioId))){
+            throw new LogicaNegocioException("Solo puede cancelar el intercambio un usuario que participe en dicho intercambio");
+        }
+        updateEstadoIntercambio(intercambio, estadoIntercambio);
+
+        return null;
+    }
 }
