@@ -43,15 +43,15 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
     @Override
-    public Page<GetArticulo> getAllArticulos(ArticuloFiltroRequest filtroRequest,
-                                             Pageable pageable) {
+    public Page<GetArticulo> getAllArticulosDisponibles(ArticuloFiltroRequest filtroRequest,
+                                                        Pageable pageable) {
 
         Specification<Articulo> spec = Specification
                 .where(ArticuloSpecification.conCategoria(filtroRequest.categoria()))
                 .and(ArticuloSpecification.conEstado(filtroRequest.estado()))
                 .and(ArticuloSpecification.conNombre(filtroRequest.nombre()));
 
-        return articuloRepository.findAll(spec, pageable).map(articuloMapper::toGetArticulo);
+        return articuloRepository.findAllByEstado(spec, pageable, EstadoArticulo.DISPONIBLE).map(articuloMapper::toGetArticulo);
     }
 
     @Override
@@ -123,5 +123,13 @@ public class ArticuloServiceImpl implements ArticuloService {
     public void deleteArticuloById(Long id) {
         if(articuloRepository.existsById(id))
             articuloRepository.deleteById(id);
+    }
+
+    @Override
+    public GetArticulo eliminadoLogico(Long id) {
+        Articulo articulo = articuloRepository.findById(id)
+                .orElseThrow(() -> new ArticuloNotFoundException("Error al eliminar el articulo con id "+id+", no encontrado en BD"));
+        articulo.setEstado(EstadoArticulo.DESACTIVADO);
+        return articuloMapper.toGetArticulo(articuloRepository.save(articulo));
     }
 }
