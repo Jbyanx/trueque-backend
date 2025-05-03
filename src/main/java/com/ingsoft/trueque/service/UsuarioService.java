@@ -4,7 +4,6 @@ import com.ingsoft.trueque.dto.request.SaveUsuario;
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
 import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.dto.response.GetUsuario;
-import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

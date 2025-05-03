@@ -36,10 +36,6 @@ public class IntercambioController {
     /***
      * Mediante esta funcion se consultan los intercambios por idUsuario, y con el parametro EstadoIntercambio
      * enviamos que estados queremos consultar, si el parametro no se envia los trae todos
-     *
-     * @param usuarioId
-     * @param estado
-     * @return
      */
 
     @GetMapping("/usuarios/{usuarioId}")
@@ -55,7 +51,7 @@ public class IntercambioController {
                 .path("/intercambios/{id}")
                 .buildAndExpand(intercambioId)
                 .toUri();
-        return ResponseEntity.status(HttpStatus.OK).location(location).build();
+        return ResponseEntity.status(HttpStatus.OK).location(location).body(intercambioAceptado);
     }
 
     @PutMapping("/usuarios/{usuarioId}/{intercambioId}/rechazar")
@@ -65,7 +61,7 @@ public class IntercambioController {
                 .path("/intercambios/{id}")
                 .buildAndExpand(intercambioId)
                 .toUri();
-        return ResponseEntity.status(HttpStatus.OK).location(location).build();
+        return ResponseEntity.status(HttpStatus.OK).location(location).body(intercambioRechazado);
     }
 
     @PutMapping("/usuarios/{usuarioId}/{intercambioId}/cancelar")

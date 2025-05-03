@@ -7,7 +7,6 @@ import com.ingsoft.trueque.dto.response.GetUsuario;
 import com.ingsoft.trueque.exception.UsuarioNotFoundException;
 import com.ingsoft.trueque.mapper.ArticuloMapper;
 import com.ingsoft.trueque.mapper.UsuarioMapper;
-import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Usuario;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.repository.ArticuloRepository;
