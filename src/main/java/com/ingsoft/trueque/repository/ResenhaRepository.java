@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ResenhaRepository extends JpaRepository<Resenha, Long> {
 
-    Page<Resenha> findAllByAutorNombre(String nombre, Pageable pageable);
+    Page<Resenha> findAllByUsuarioCalificanteNombre(String nombre, Pageable pageable);
     Page<Resenha> findAllByPuntuacionGreaterThanEqual(Integer puntuacionMinima, Pageable pageable);
 }

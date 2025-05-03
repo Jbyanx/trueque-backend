@@ -11,15 +11,16 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ResenhaMapper {
 
-    @Mapping(target = "idAutor", source = "autor.id")
+    @Mapping(target = "idUsuarioCalificante", source = "usuarioCalificante.id")
+    @Mapping(target = "idUsuarioCalificado", source = "usuarioCalificado.id")
     @Mapping(target = "idIntercambio", source = "intercambio.id")
     GetResenha toGetResenha(Resenha resenha);
 
-    @Mapping(target = "autor.id", source = "idAutor")
+    @Mapping(target = "usuarioCalificante.id", source = "idUsuarioCalificante")
+    @Mapping(target = "usuarioCalificado.id", source = "idUsuarioCalificado")
     @Mapping(target = "intercambio.id", source = "idIntercambio")
     Resenha toResenha(SaveResenha saveResenha);
 
     List<GetResenha> toGetResenhaList(List<Resenha> resenhaList);
     List<Resenha> toResenhaList(List<GetResenha> getResenhaList);
-
 }

@@ -2,6 +2,7 @@ package com.ingsoft.trueque.controller;
 
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
 import com.ingsoft.trueque.dto.response.GetArticulo;
+import com.ingsoft.trueque.dto.response.GetReputacion;
 import com.ingsoft.trueque.dto.response.GetUsuario;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.service.UsuarioService;
@@ -23,6 +24,11 @@ public class UsuarioController {
                                                                    @RequestParam(required = false) EstadoArticulo estadoArticulo,
                                                                    Pageable pageable) {
         return ResponseEntity.ok(usuarioService.getArticulosByUsuario(idUsuario, estadoArticulo, pageable));
+    }
+
+    @GetMapping("/{idUsuario}/reputacion")
+    public ResponseEntity<GetReputacion> obtenerReputacion(@PathVariable Long idUsuario) {
+        return ResponseEntity.ok(usuarioService.obtenerReputacionDelUsuario(idUsuario));
     }
 
     @GetMapping

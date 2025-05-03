@@ -4,6 +4,7 @@ import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -34,4 +35,7 @@ public interface ArticuloRepository extends JpaRepository<Articulo, Long>, JpaSp
     Page<Articulo> findArticulosIntercambiadosPorUsuario(Long usuarioId, Pageable pageable);
 
     Page<Articulo> getArticulosByPropietarioIdAndEstado(Long idUsuario, Pageable pageable, EstadoArticulo estadoArticulo);
+
+    @Query("select a from Articulo a where a.estado = 'DISPONIBLE'")
+    Page<Articulo> findAllByEstado(Specification<Articulo> spec, Pageable pageable, EstadoArticulo estadoArticulo);
 }

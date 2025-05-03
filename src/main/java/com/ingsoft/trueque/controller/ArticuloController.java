@@ -22,9 +22,9 @@ public class ArticuloController {
     private final ArticuloService articuloService;
 
     @GetMapping
-    public ResponseEntity<Page<GetArticulo>> getAllArticulos(@ModelAttribute ArticuloFiltroRequest filtros,
-                                                             Pageable pageable){
-        return ResponseEntity.ok(articuloService.getAllArticulos(filtros, pageable));
+    public ResponseEntity<Page<GetArticulo>> getAllArticulosDisponibles(@ModelAttribute ArticuloFiltroRequest filtros,
+                                                                        Pageable pageable){
+        return ResponseEntity.ok(articuloService.getAllArticulosDisponibles(filtros, pageable));
     }
 
     @GetMapping("/{id}")
@@ -33,7 +33,7 @@ public class ArticuloController {
     }
 
     @PostMapping
-    public ResponseEntity<GetArticulo> saveArticulo(@RequestPart @Valid SaveArticulo articulo, @RequestPart MultipartFile file){
+    public ResponseEntity<GetArticulo> crearArticulo(@RequestPart @Valid SaveArticulo articulo, @RequestPart MultipartFile file){
         GetArticulo articuloSaved = articuloService.saveArticulo(articulo, file);
         URI createdArticulo = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -43,14 +43,20 @@ public class ArticuloController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GetArticulo> updateArticulo(@PathVariable Long id,
+    public ResponseEntity<GetArticulo> editarArticulo(@PathVariable Long id,
                                                       @RequestPart @Valid SaveArticulo articulo,
                                                       @RequestPart(required = false) MultipartFile file){
         return ResponseEntity.ok(articuloService.updateArticuloById(id, articulo, file));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> eliminarArticuloLogico(@PathVariable Long id){
+        articuloService.eliminadoLogico(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteArticulo(@PathVariable Long id){
+    public ResponseEntity<Void> eliminarArticuloFisico(@PathVariable Long id){
         articuloService.deleteArticuloById(id);
         return ResponseEntity.noContent().build();
     }

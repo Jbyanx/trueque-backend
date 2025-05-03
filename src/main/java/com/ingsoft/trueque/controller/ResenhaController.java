@@ -29,9 +29,9 @@ public class ResenhaController {
         return ResponseEntity.ok(resenhaService.getResenhaById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<GetResenha> saveResenha(@ModelAttribute @Valid SaveResenha resenha){
-        GetResenha resenhaSaved = resenhaService.saveResenha(resenha);
+    @PostMapping("/intercambios/{idIntercambio}")
+    public ResponseEntity<GetResenha> saveResenha(@ModelAttribute @Valid SaveResenha resenha, @PathVariable Long idIntercambio){
+        GetResenha resenhaSaved = resenhaService.saveResenha(idIntercambio, resenha);
         URI createdResenha = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(resenhaSaved.id())

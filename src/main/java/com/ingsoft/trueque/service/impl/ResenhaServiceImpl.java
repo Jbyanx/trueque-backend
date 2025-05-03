@@ -2,6 +2,7 @@ package com.ingsoft.trueque.service.impl;
 
 import com.ingsoft.trueque.dto.request.SaveResenha;
 import com.ingsoft.trueque.dto.response.GetResenha;
+import com.ingsoft.trueque.exception.LogicaNegocioException;
 import com.ingsoft.trueque.exception.ResenhaNotFoundException;
 import com.ingsoft.trueque.mapper.ResenhaMapper;
 import com.ingsoft.trueque.model.Intercambio;
@@ -41,15 +42,22 @@ public class ResenhaServiceImpl implements ResenhaService {
 
     @Override
     @Transactional
-    public GetResenha saveResenha(SaveResenha resenha) {
-        Intercambio intercambio = intercambioRepository.findById(resenha.getIdIntercambio())
-                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+resenha.getIdIntercambio()+", no existe en BD"));
+    public GetResenha saveResenha(Long idIntercambio, SaveResenha resenha) {
+        Intercambio intercambio = intercambioRepository.findById(idIntercambio)
+                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+idIntercambio+", no existe en BD"));
 
-        Usuario autor = usuarioRepository.findById(resenha.getIdAutor())
-                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+resenha.getIdAutor()+", no existe en BD"));
+        Usuario usuarioCalificante = usuarioRepository.findById(resenha.getIdUsuarioCalificante())
+                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+resenha.getIdUsuarioCalificante()+", no existe en BD"));
+
+        Usuario usuarioCalificado = determinarUsuarioCalificado(usuarioCalificante, intercambio);
+
+        if(usuarioCalificante.getId().equals(intercambio.getUsuarioDos().getId())){
+            throw new LogicaNegocioException("No puedes guardar una reseña para el mismo usuario que la crea");
+        }
 
         Resenha resenhaToSave = resenhaMapper.toResenha(resenha);
-        resenhaToSave.setAutor(autor);
+        resenhaToSave.setUsuarioCalificado(usuarioCalificado);
+        resenhaToSave.setUsuarioCalificante(usuarioCalificante);
         resenhaToSave.setIntercambio(intercambio);
 
         return resenhaMapper.toGetResenha(
@@ -57,6 +65,16 @@ public class ResenhaServiceImpl implements ResenhaService {
                     resenhaToSave
                 )
         );
+    }
+
+    private static Usuario determinarUsuarioCalificado(Usuario usuarioCalificante, Intercambio intercambio) {
+        if (usuarioCalificante.getId().equals(intercambio.getUsuarioUno().getId())) {
+            return intercambio.getUsuarioDos();
+        } else if (usuarioCalificante.getId().equals(intercambio.getUsuarioDos().getId())) {
+            return intercambio.getUsuarioUno();
+        } else {
+            throw new LogicaNegocioException("El usuarioCalificante no participó en este intercambio.");
+        }
     }
 
     @Override
