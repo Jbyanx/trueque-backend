@@ -3,6 +3,7 @@ package com.ingsoft.trueque.service.impl;
 import com.ingsoft.trueque.dto.request.SaveUsuario;
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
 import com.ingsoft.trueque.dto.response.GetArticulo;
+import com.ingsoft.trueque.dto.response.GetReputacion;
 import com.ingsoft.trueque.dto.response.GetUsuario;
 import com.ingsoft.trueque.exception.UsuarioNotFoundException;
 import com.ingsoft.trueque.mapper.ArticuloMapper;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -85,5 +88,17 @@ public class UsuarioServiceImpl implements UsuarioService {
             return articuloRepository.findArticulosIntercambiadosPorUsuario(idUsuario, pageable).map(articuloMapper::toGetArticulo);
         }
         return articuloRepository.getArticulosByPropietarioIdAndEstado(idUsuario, pageable, estadoArticulo).map(articuloMapper::toGetArticulo);
+    }
+
+    @Override
+    public GetReputacion obtenerReputacionDelUsuario(Long idUsuario) {
+        if(!usuarioRepository.existsById(idUsuario)){
+            throw new UsuarioNotFoundException("Error al obtener la reputacion del usuario con id "+idUsuario+", no existe en BD");
+        }
+        return new GetReputacion(
+                idUsuario,
+                Optional.ofNullable(usuarioRepository.obtenerReputacionDelUsuario(idUsuario)).orElse(0.0),
+                usuarioRepository.totalResenhasDelUsuario(idUsuario)
+                );
     }
 }
