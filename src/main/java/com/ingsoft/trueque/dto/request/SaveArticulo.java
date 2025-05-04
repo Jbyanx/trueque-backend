@@ -18,11 +18,8 @@ public class SaveArticulo{
         @NotBlank
         private String nombre;
         private String descripcion;
-        private String rutaImagen;
         @NotNull
         private Long idCategoria;
-        @NotNull
-        private EstadoArticulo estado;
         @NotNull
         private Long idPropietario;
 }
