@@ -73,6 +73,7 @@ public class ArticuloServiceImpl implements ArticuloService {
 
         Articulo articuloToSave = articuloMapper.toArticulo(articulo);
         articuloToSave.setCategoria(categoria);
+        articuloToSave.setEstado(EstadoArticulo.DISPONIBLE);
         articuloToSave.setPropietario(propietario);
 
         try{
@@ -105,9 +106,6 @@ public class ArticuloServiceImpl implements ArticuloService {
         }
         if(StringUtils.hasText(articulo.getDescripcion())){
             articuloBd.setDescripcion(articulo.getDescripcion());
-        }
-        if(StringUtils.hasText(articulo.getRutaImagen())){
-            articuloBd.setRutaImagen(articulo.getRutaImagen());
         }
         try {
             if (file != null && !file.isEmpty()) {

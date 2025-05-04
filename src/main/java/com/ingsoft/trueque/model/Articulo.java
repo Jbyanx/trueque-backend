@@ -22,6 +22,7 @@ public class Articulo {
     private String descripcion;
     private String rutaImagen;
 
+    //hola
     @OneToOne
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;
