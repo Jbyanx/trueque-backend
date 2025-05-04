@@ -19,6 +19,18 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(ImagenNoValidaException.class)
+    public ResponseEntity<ApiError> handleImagenNoValidaException(ImagenNoValidaException e){
+        return ResponseEntity.badRequest().body(
+                new  ApiError(
+                        HttpStatus.BAD_REQUEST,
+                        "la imagen enviada no se guardó correctamente",
+                        e.getMessage(),
+                        LocalDateTime.now()
+                )
+        );
+    }
+
     @ExceptionHandler(AccesoNoPermitidoException.class)
     public ResponseEntity<ApiError> handleAccesoNoPermitidoException(AccesoNoPermitidoException e){
         return ResponseEntity.badRequest().body(
@@ -231,15 +243,15 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGenericException(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                new ApiError(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Error interno del servidor",
-                        e.getMessage(),
-                        LocalDateTime.now()
-                )
-        );
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiError> handleGenericException(Exception e) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+//                new ApiError(
+//                        HttpStatus.INTERNAL_SERVER_ERROR,
+//                        "Error interno del servidor",
+//                        e.getMessage(),
+//                        LocalDateTime.now()
+//                )
+//        );
+//    }
 }
