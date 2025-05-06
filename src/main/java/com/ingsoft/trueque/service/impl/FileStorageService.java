@@ -1,5 +1,6 @@
 package com.ingsoft.trueque.service.impl;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,7 @@ public class FileStorageService {
 
     private final String uploadDir = "uploads/articulos";
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     public String guardarImagen(MultipartFile archivo) throws IOException {
         if (archivo.isEmpty()) {
             throw new IllegalArgumentException("El archivo está vacío");
