@@ -14,6 +14,7 @@ import com.ingsoft.trueque.service.ReporteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,12 +26,14 @@ public class ReporteServiceImpl implements ReporteService {
     private final ReporteMapper reporteMapper;
     private final ArticuloRepository articuloRepository;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public Page<GetReporte> getAllReportes(Pageable pageable) {
         return reporteRepository.findAll(pageable)
                 .map(reporteMapper::toGetReporte);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetReporte getReporteById(Long id) {
         return reporteRepository.findById(id)
@@ -38,6 +41,7 @@ public class ReporteServiceImpl implements ReporteService {
                 .orElseThrow(() -> new ReporteNotFoundException("Error al obtener el reporte con id "+id+", no se encuentra en BD"));
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetReporte saveReporte(Long idArticulo, SaveReporte reporte) {
         Reporte reporteToSave = reporteMapper.toReporte(reporte);
@@ -56,6 +60,7 @@ public class ReporteServiceImpl implements ReporteService {
         );
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetReporte updateReporteById(Long id, SaveReporte reporte) {
         Reporte reporteSaved = reporteRepository.findById(id)
@@ -68,6 +73,7 @@ public class ReporteServiceImpl implements ReporteService {
         return reporteMapper.toGetReporte(reporteRepository.save(reporteSaved));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteReporteById(Long id) {
         if (reporteRepository.existsById(id)) {

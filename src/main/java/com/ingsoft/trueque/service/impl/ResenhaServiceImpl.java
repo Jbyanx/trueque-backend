@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,12 +28,14 @@ public class ResenhaServiceImpl implements ResenhaService {
     private final ResenhaMapper resenhaMapper;
     private final UsuarioRepository usuarioRepository;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public Page<GetResenha> getAllResenhas(Pageable pageable) {
         return resenhaRepository.findAll(pageable)
                 .map(resenhaMapper::toGetResenha);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetResenha getResenhaById(Long id) {
         return resenhaRepository.findById(id)
@@ -40,6 +43,7 @@ public class ResenhaServiceImpl implements ResenhaService {
                 .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+id+", no existe en BD"));
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     @Transactional
     public GetResenha saveResenha(Long idIntercambio, SaveResenha resenha) {
@@ -67,7 +71,7 @@ public class ResenhaServiceImpl implements ResenhaService {
         );
     }
 
-    private static Usuario determinarUsuarioCalificado(Usuario usuarioCalificante, Intercambio intercambio) {
+    private Usuario determinarUsuarioCalificado(Usuario usuarioCalificante, Intercambio intercambio) {
         if (usuarioCalificante.getId().equals(intercambio.getUsuarioUno().getId())) {
             return intercambio.getUsuarioDos();
         } else if (usuarioCalificante.getId().equals(intercambio.getUsuarioDos().getId())) {
@@ -77,6 +81,7 @@ public class ResenhaServiceImpl implements ResenhaService {
         }
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetResenha updateResenhaById(Long id, SaveResenha resenha) {
         Resenha resenhaSaved = resenhaRepository.findById(id)
@@ -95,6 +100,7 @@ public class ResenhaServiceImpl implements ResenhaService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteResenhaById(Long id) {
         if(resenhaRepository.existsById(id)){

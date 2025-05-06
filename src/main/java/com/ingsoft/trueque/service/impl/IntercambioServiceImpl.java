@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,12 +26,14 @@ public class IntercambioServiceImpl implements IntercambioService {
     private final IntercambioRepository intercambioRepository;
     private final IntercambioMapper intercambioMapper;
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public Page<GetIntercambio> getAllIntercambios(Pageable pageable) {
         return intercambioRepository.findAll(pageable)
                 .map(intercambioMapper::toGetIntercambio);
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public List<GetIntercambio> getIntercambiosByUsuarioIdAndEstado(Long id, EstadoIntercambio estadoIntercambio) {
         List<Intercambio> historial;
@@ -42,6 +45,7 @@ public class IntercambioServiceImpl implements IntercambioService {
         return intercambioMapper.toGetIntercambioList(historial);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetIntercambio getIntercambioById(Long id) {
         return intercambioRepository.findById(id)
@@ -49,6 +53,7 @@ public class IntercambioServiceImpl implements IntercambioService {
                 .orElseThrow(() -> new IntercambioNotFoundException("Error al buscar!, el intercambio con id "+ id + " no existe en BD."));
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetIntercambio solicitarIntercambio(SaveIntercambio intercambio) {
         Intercambio intercambioToSave = intercambioMapper.toIntercambio(intercambio);
@@ -70,8 +75,7 @@ public class IntercambioServiceImpl implements IntercambioService {
         );
     }
 
-
-
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     @Transactional
     public GetIntercambio updateEstadoById(Long id, EstadoIntercambio estadoIntercambio) {
@@ -90,6 +94,7 @@ public class IntercambioServiceImpl implements IntercambioService {
             intercambioToUpdate.setEstado(estadoIntercambio);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteIntercambioById(Long id) {
         if (intercambioRepository.existsById(id)) {
@@ -97,6 +102,7 @@ public class IntercambioServiceImpl implements IntercambioService {
         }
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Transactional
     @Override
     public GetIntercambio aceptarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio) {
@@ -112,6 +118,7 @@ public class IntercambioServiceImpl implements IntercambioService {
         return intercambioMapper.toGetIntercambio(intercambio);
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Transactional
     @Override
     public GetIntercambio rechazarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio) {
@@ -127,6 +134,7 @@ public class IntercambioServiceImpl implements IntercambioService {
         return intercambioMapper.toGetIntercambio(intercambio);
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Transactional
     @Override
     public GetIntercambio cancelarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio) {

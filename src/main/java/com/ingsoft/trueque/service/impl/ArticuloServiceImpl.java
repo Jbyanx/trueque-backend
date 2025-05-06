@@ -5,6 +5,7 @@ import com.ingsoft.trueque.dto.request.SaveArticulo;
 import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.exception.ArticuloNotFoundException;
 import com.ingsoft.trueque.exception.CategoriaNotFoundException;
+import com.ingsoft.trueque.exception.ImagenNoValidaException;
 import com.ingsoft.trueque.exception.UsuarioNotFoundException;
 import com.ingsoft.trueque.mapper.ArticuloMapper;
 import com.ingsoft.trueque.model.Articulo;
@@ -20,6 +21,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +44,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         this.fileStorageService = fileStorageService;
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public Page<GetArticulo> getAllArticulosDisponibles(ArticuloFiltroRequest filtroRequest,
                                                         Pageable pageable) {
@@ -54,6 +57,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         return articuloRepository.findAllByEstado(spec, pageable, EstadoArticulo.DISPONIBLE).map(articuloMapper::toGetArticulo);
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetArticulo getArticuloById(Long id) {
         return articuloRepository.findById(id)
@@ -61,6 +65,7 @@ public class ArticuloServiceImpl implements ArticuloService {
                 .orElseThrow(() -> new ArticuloNotFoundException("Error al buscar el Articulo con id "+id+", no encontrado en BD"));
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen) {
         //Categoria categoria = categoriaRepository.getCategoriaById(articulo.idCategoria())
@@ -76,13 +81,15 @@ public class ArticuloServiceImpl implements ArticuloService {
         articuloToSave.setEstado(EstadoArticulo.DISPONIBLE);
         articuloToSave.setPropietario(propietario);
 
-        try{
-            if (imagen != null && !imagen.isEmpty()) {
-                String rutaImagen = fileStorageService.guardarImagen(imagen);
-                articuloToSave.setRutaImagen(rutaImagen);
+        if(imagen !=null){
+            try{
+                if (imagen != null && !imagen.isEmpty()) {
+                    String rutaImagen = fileStorageService.guardarImagen(imagen);
+                    articuloToSave.setRutaImagen(rutaImagen);
+                }
+            } catch (Exception e) {
+                throw new ImagenNoValidaException("Error al guardar la imagen");
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
 
         return articuloMapper.toGetArticulo(articuloRepository.save(articuloToSave));
@@ -91,6 +98,7 @@ public class ArticuloServiceImpl implements ArticuloService {
     /***
      * Cambiar nombre, descripcion e imagen del articulo
      */
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     @Transactional
     public GetArticulo updateArticuloById(Long id, SaveArticulo articulo, MultipartFile file) {
@@ -117,12 +125,14 @@ public class ArticuloServiceImpl implements ArticuloService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteArticuloById(Long id) {
         if(articuloRepository.existsById(id))
             articuloRepository.deleteById(id);
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetArticulo eliminadoLogico(Long id) {
         Articulo articulo = articuloRepository.findById(id)
