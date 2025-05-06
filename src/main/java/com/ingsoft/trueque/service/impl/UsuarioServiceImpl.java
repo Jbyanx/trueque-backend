@@ -5,17 +5,22 @@ import com.ingsoft.trueque.dto.request.UpdateUsuario;
 import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.dto.response.GetReputacion;
 import com.ingsoft.trueque.dto.response.GetUsuario;
+import com.ingsoft.trueque.exception.InvalidPasswordException;
 import com.ingsoft.trueque.exception.UsuarioNotFoundException;
 import com.ingsoft.trueque.mapper.ArticuloMapper;
 import com.ingsoft.trueque.mapper.UsuarioMapper;
 import com.ingsoft.trueque.model.Usuario;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
+import com.ingsoft.trueque.model.util.Rol;
 import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.UsuarioService;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,13 +33,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final ArticuloRepository articuloRepository;
     private final ArticuloMapper articuloMapper;
+    private final PasswordEncoder passwordEncoder;
 
-
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public Page<GetUsuario> getAllUsuarios(Pageable pageable) {
         return usuarioRepository.findAll(pageable).map(usuarioMapper::toGetUsuario);
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetUsuario getUsuarioById(Long id) {
         return usuarioRepository.getUsuarioById(id)
@@ -43,14 +50,33 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public GetUsuario saveUsuario(SaveUsuario usuario) {
-        return usuarioMapper.toGetUsuario(
-                usuarioRepository.save(
-                    usuarioMapper.toUsuario(usuario)
-                )
-        );
+    public Usuario getUsuarioByCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new UsuarioNotFoundException("Error al buscar el usuario con correo "+correo+", no existe en BD"));
     }
 
+    @Override
+    public Usuario saveUsuario(SaveUsuario usuario) {
+        validarClave(usuario);
+
+        Usuario usuarioToSave = Usuario.builder()
+                .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
+                .correo(usuario.getCorreo())
+                .clave(passwordEncoder.encode(usuario.getClave()))
+                .rol(Rol.USUARIO)
+                .build();
+
+        return usuarioRepository.save(usuarioToSave);
+    }
+
+    private void validarClave(SaveUsuario usuario) {
+        if(!StringUtils.hasText(usuario.getClave()) || !StringUtils.hasText(usuario.getRepetirClave()) ){
+            throw new InvalidPasswordException("Error, las claves no coinciden");
+        }
+    }
+
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetUsuario updateUsuarioById(Long id, UpdateUsuario usuario) {
         Usuario usuarioSaved = usuarioRepository.getUsuarioById(id)
@@ -72,6 +98,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteUsuarioById(Long id) {
         if(usuarioRepository.existsById(id)) {
