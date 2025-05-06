@@ -22,43 +22,11 @@ import java.util.stream.Collectors;
 @Table(name = "usuarios")
 @SuperBuilder
 @NoArgsConstructor
-public class Usuario extends Persona implements UserDetails {
+public class Usuario extends Persona {
 
     @OneToMany(mappedBy = "propietario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private List<Articulo> articuloList = new ArrayList<>();
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (getRol() == null) return Collections.emptyList();
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-
-        // Agregar el rol con el prefijo "ROLE_"
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + getRol().name()));
-
-        // Agregar los permisos si existen
-        if (getRol().getPermisos() != null) {
-            authorities.addAll(
-                    getRol().getPermisos().stream()
-                            .map(permiso -> new SimpleGrantedAuthority(permiso.name()))
-                            .collect(Collectors.toList())
-            );
-        }
-
-        return authorities;
-    }
-
-
-    @Override
-    public String getPassword() {
-        return this.getClave();
-    }
-
-    @Override
-    public String getUsername() {
-        return this.getCorreo();
-    }
 
 }
 
