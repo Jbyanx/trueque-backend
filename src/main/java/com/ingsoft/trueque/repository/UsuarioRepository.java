@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    Optional<Usuario> findByCorreo(String correo);
+    Optional<Usuario> findByCorreoEqualsIgnoreCase(String correo);
     Optional<Usuario> getUsuarioById(Long id);
 
     @Query("select avg(r.puntuacion) from Resenha r where r.usuarioCalificado.id = ?1")

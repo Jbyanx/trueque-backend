@@ -15,7 +15,6 @@ import com.ingsoft.trueque.model.util.Rol;
 import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.UsuarioService;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +50,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario getUsuarioByCorreo(String correo) {
-        return usuarioRepository.findByCorreo(correo)
+        return usuarioRepository.findByCorreoEqualsIgnoreCase(correo)
                 .orElseThrow(() -> new UsuarioNotFoundException("Error al buscar el usuario con correo "+correo+", no existe en BD"));
     }
 
@@ -62,7 +61,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuarioToSave = Usuario.builder()
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
-                .correo(usuario.getCorreo())
+                .correo(usuario.getCorreo().toLowerCase())
                 .clave(passwordEncoder.encode(usuario.getClave()))
                 .rol(Rol.USUARIO)
                 .build();
