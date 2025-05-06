@@ -3,6 +3,7 @@ package com.ingsoft.trueque.mapper;
 import com.ingsoft.trueque.dto.request.SaveUsuario;
 import com.ingsoft.trueque.dto.response.ArticuloSimple;
 import com.ingsoft.trueque.dto.response.GetUsuario;
+import com.ingsoft.trueque.dto.response.GetUsuarioRegistrado;
 import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Usuario;
 import org.mapstruct.InheritInverseConfiguration;
@@ -16,6 +17,8 @@ public interface UsuarioMapper {
 
     @Mapping(target = "articulos", source = "articuloList")
     GetUsuario toGetUsuario(Usuario usuario);
+
+    GetUsuarioRegistrado toGetUsuarioRegistrado(Usuario usuario);
 
     Usuario toUsuario(SaveUsuario saveUsuario);
 

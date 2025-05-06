@@ -22,4 +22,6 @@ public class SaveUsuario{
         private String correo;
         @NotBlank
         private String clave;
+        @NotBlank
+        private String repetirClave;
 }

@@ -10,6 +10,7 @@ import com.ingsoft.trueque.service.CategoriaService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -21,11 +22,13 @@ public class CategoriaServiceImpl implements CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private final CategoriaMapper categoriaMapper;
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public List<GetCategoria> getAllCategorias(Pageable pageable) {
         return categoriaMapper.toGetCategoriaList(categoriaRepository.findAll(pageable).getContent());
     }
 
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetCategoria getCategoriaById(Long id) {
         return categoriaRepository.findById(id)
@@ -34,6 +37,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetCategoria saveCategoria(SaveCategoria categoria) {
         return categoriaMapper.toGetCategoria(
@@ -43,6 +47,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         );
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     @Transactional
     public GetCategoria updateCatgoriaById(Long id, SaveCategoria categoria) {
@@ -61,6 +66,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteCategoriaById(Long id) {
         if(categoriaRepository.existsById(id)){
