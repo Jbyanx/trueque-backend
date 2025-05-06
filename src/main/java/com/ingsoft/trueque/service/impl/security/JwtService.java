@@ -20,7 +20,7 @@ public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String  SECRET_KEY;
 
-    public String generarToken(UserDetails usuario, Map<String, Object> claims) {
+    public String generarToken(UserDetails persona, Map<String, Object> claims) {
         Date now = new Date(System.currentTimeMillis());
         Date expiration = new Date(now.getTime() + (EXPIRATION_EN_MINUTOS * 60 * 1000));
 
@@ -28,7 +28,7 @@ public class JwtService {
                 .header()
                     .type("JWT")
                 .and()
-                .subject(usuario.getUsername()) // en realidad ese metodo setea el correo
+                .subject(persona.getUsername()) // en realidad ese metodo setea el correo
                 .issuedAt(now)
                 .expiration(expiration)
                 .claims(claims)
@@ -52,7 +52,7 @@ public class JwtService {
                 .parseClaimsJws(token).getPayload();
     }
 
-    public Boolean isvalid(String token, Usuario usuario) {
-        return usuario.getUsername().equals(extractCorreo(token));
+    public Boolean isvalid(String token, UserDetails persona) {
+        return persona.getUsername().equals(extractCorreo(token));
     }
 }
