@@ -18,6 +18,7 @@ public interface UsuarioMapper {
     @Mapping(target = "articulos", source = "articuloList")
     GetUsuario toGetUsuario(Usuario usuario);
 
+    @Mapping(target = "nombre", expression = "java(usuario.getNombre() + \" \" + usuario.getApellido())")
     GetUsuarioRegistrado toGetUsuarioRegistrado(Usuario usuario);
 
     Usuario toUsuario(SaveUsuario saveUsuario);

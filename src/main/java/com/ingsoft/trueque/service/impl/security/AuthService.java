@@ -68,7 +68,7 @@ public class AuthService {
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUser = auth.getPrincipal().toString();
 
-        return usuarioRepository.findByCorreo(authenticatedUser)
+        return usuarioRepository.findByCorreoEqualsIgnoreCase(authenticatedUser)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado"));
     }
 }
