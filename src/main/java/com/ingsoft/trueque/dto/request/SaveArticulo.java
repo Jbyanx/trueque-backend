@@ -20,6 +20,4 @@ public class SaveArticulo{
         private String descripcion;
         @NotNull
         private Long idCategoria;
-        @NotNull
-        private Long idPropietario;
 }
