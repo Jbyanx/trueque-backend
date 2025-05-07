@@ -14,6 +14,6 @@ public interface ArticuloService {
     GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen);
     GetArticulo updateArticuloById(Long id, SaveArticulo articulo, MultipartFile imagen);
     void deleteArticuloById(Long id);
-
     GetArticulo eliminadoLogico(Long id);
+    Page<GetArticulo> obtenerMisArticulos(Pageable pageable);
 }

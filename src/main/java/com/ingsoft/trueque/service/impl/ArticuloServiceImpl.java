@@ -3,15 +3,14 @@ package com.ingsoft.trueque.service.impl;
 import com.ingsoft.trueque.dto.request.ArticuloFiltroRequest;
 import com.ingsoft.trueque.dto.request.SaveArticulo;
 import com.ingsoft.trueque.dto.response.GetArticulo;
-import com.ingsoft.trueque.exception.ArticuloNotFoundException;
-import com.ingsoft.trueque.exception.CategoriaNotFoundException;
-import com.ingsoft.trueque.exception.ImagenNoValidaException;
-import com.ingsoft.trueque.exception.UsuarioNotFoundException;
+import com.ingsoft.trueque.exception.*;
 import com.ingsoft.trueque.mapper.ArticuloMapper;
 import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Categoria;
+import com.ingsoft.trueque.model.Persona;
 import com.ingsoft.trueque.model.Usuario;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
+import com.ingsoft.trueque.model.util.Rol;
 import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.CategoriaRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
@@ -19,14 +18,17 @@ import com.ingsoft.trueque.service.ArticuloService;
 import com.ingsoft.trueque.specification.ArticuloSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticuloServiceImpl implements ArticuloService {
@@ -73,13 +75,12 @@ public class ArticuloServiceImpl implements ArticuloService {
                 .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria "+ articulo.getIdCategoria()+", no encontrada en BD"));
 
         //Usuario propietario = usuarioRepository.getUsuarioById(articulo.idPropietario())
-        Usuario propietario = usuarioRepository.getUsuarioById(1L)
-                .orElseThrow(() -> new UsuarioNotFoundException("Error al guardar el articulo, usuario con id "+articulo.getIdPropietario()+", no encontrado en BD"));
+        Persona propietario = (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Articulo articuloToSave = articuloMapper.toArticulo(articulo);
         articuloToSave.setCategoria(categoria);
         articuloToSave.setEstado(EstadoArticulo.DISPONIBLE);
-        articuloToSave.setPropietario(propietario);
+        articuloToSave.setPropietario((Usuario) propietario);
 
         if(imagen !=null){
             try{
@@ -96,7 +97,7 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
     /***
-     * Cambiar nombre, descripcion e imagen del articulo
+     * Cambiar nombre, descripcion e imagen del articulo (NO CAMBIA AL PROPIETARIO)
      */
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
@@ -104,6 +105,16 @@ public class ArticuloServiceImpl implements ArticuloService {
     public GetArticulo updateArticuloById(Long id, SaveArticulo articulo, MultipartFile file) {
         Articulo articuloBd = articuloRepository.findById(id)
                 .orElseThrow(() -> new ArticuloNotFoundException("Error al buscar el Articulo con id "+id+", no encontrado en BD"));
+
+        Persona actual = obtenerPrincipal();
+
+        boolean esPropietario = actual.getId().equals(articuloBd.getPropietario().getId());
+        boolean esAdmin = actual.getRol().equals(Rol.ADMINISTRADOR);
+
+        if(!esPropietario && !esAdmin){
+            throw new AccesoNoPermitidoException("No tienes permiso para actualizar este articulo");
+        }
+
         updateArticulo(articuloBd, articulo, file);
         return articuloMapper.toGetArticulo(articuloRepository.save(articuloBd));
     }
@@ -136,8 +147,36 @@ public class ArticuloServiceImpl implements ArticuloService {
     @Override
     public GetArticulo eliminadoLogico(Long id) {
         Articulo articulo = articuloRepository.findById(id)
-                .orElseThrow(() -> new ArticuloNotFoundException("Error al eliminar el articulo con id "+id+", no encontrado en BD"));
+                .orElseThrow(() -> new ArticuloNotFoundException("Error al eliminar el artículo con id " + id + ", no encontrado en BD"));
+
+        Persona actual = (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean esPropietario = actual.getId().equals(articulo.getPropietario().getId());
+        boolean esAdmin = actual.getRol().equals(Rol.ADMINISTRADOR);
+
+        if (!esPropietario && !esAdmin) {
+            throw new RuntimeException("No tienes permisos para eliminar este artículo");
+        }
+
         articulo.setEstado(EstadoArticulo.DESACTIVADO);
         return articuloMapper.toGetArticulo(articuloRepository.save(articulo));
+    }
+
+
+    @Override
+    public Page<GetArticulo> obtenerMisArticulos(Pageable pageable) {
+        Persona actual = obtenerPrincipal();
+
+        List<GetArticulo> articulosFiltrados = articuloRepository.findAll(pageable).stream()
+                .filter(a -> a.getPropietario().getId().equals(actual.getId()))
+                .map(articuloMapper::toGetArticulo)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(articulosFiltrados, pageable, articulosFiltrados.size());
+    }
+
+
+    private Persona obtenerPrincipal() {
+        return (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
