@@ -1,6 +1,8 @@
 package com.ingsoft.trueque.config.security.filter;
 
+import com.ingsoft.trueque.model.Persona;
 import com.ingsoft.trueque.model.Usuario;
+import com.ingsoft.trueque.service.PersonaService;
 import com.ingsoft.trueque.service.UsuarioService;
 import com.ingsoft.trueque.service.impl.security.JwtService;
 import jakarta.servlet.FilterChain;
@@ -23,6 +25,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UsuarioService usuarioService;
+    private final PersonaService personaService;
 
 
     @Override
@@ -42,12 +45,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Solo si no hay ya una autenticación en contexto y hay correo extraído
         if (correo != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails usuario = usuarioService.getUsuarioByCorreo(correo);
+            Persona persona = personaService.getPersonaByCorreo(correo);
 
             // Verificamos que el token sea válido para ese usuario
-            if (jwtService.isvalid(token, usuario)) {
+            if (jwtService.isvalid(token, persona)) {
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(persona, null, persona.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
