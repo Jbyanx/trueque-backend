@@ -27,6 +27,11 @@ public class ArticuloController {
         return ResponseEntity.ok(articuloService.getAllArticulosDisponibles(filtros, pageable));
     }
 
+    @GetMapping("/mis-articulos")
+    public ResponseEntity<Page<GetArticulo>> obtenerMisArticulos(Pageable pageable){
+        return ResponseEntity.ok(articuloService.obtenerMisArticulos(pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<GetArticulo> getArticuloById(@PathVariable Long id){
         return ResponseEntity.ok(articuloService.getArticuloById(id));
