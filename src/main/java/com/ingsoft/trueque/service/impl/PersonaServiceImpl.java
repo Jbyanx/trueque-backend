@@ -3,6 +3,7 @@ package com.ingsoft.trueque.service.impl;
 import com.ingsoft.trueque.dto.response.GetPersona;
 import com.ingsoft.trueque.exception.PersonaNotFoundException;
 import com.ingsoft.trueque.mapper.PersonaMapper;
+import com.ingsoft.trueque.model.Persona;
 import com.ingsoft.trueque.repository.PersonaRepository;
 import com.ingsoft.trueque.service.PersonaService;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,11 @@ public class PersonaServiceImpl implements PersonaService {
         if(personaRepository.existsById(id)) {
             personaRepository.deleteById(id);
         }
+    }
+
+    @Override
+    public Persona getPersonaByCorreo(String correo) {
+        return personaRepository.getPersonaByCorreoEqualsIgnoreCase(correo)
+                .orElseThrow(() -> new PersonaNotFoundException("Error al obtener la persona con correo "+correo+", no existe en BD"));
     }
 }
