@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -53,10 +54,19 @@ public class AuthService {
         );
 
         authenticationManager.authenticate(authentication);
-        UserDetails persona = usuarioService.getUsuarioByCorreo(loginRequest.correo());
-        String jwt = jwtService.generarToken(persona, generarExtraClaims((Persona) persona));
 
-        return  new LoginResponse(jwt);
+        Persona persona = personaRepository.findByCorreoEqualsIgnoreCase(loginRequest.correo())
+                .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado"));
+
+        // Generar nuevo sessionId
+        String nuevoSessionId = UUID.randomUUID().toString();
+        persona.setSessionId(nuevoSessionId); // Asegúrate de tener el setter
+        personaRepository.save(persona);
+
+        // Claims con sessionId incluido
+        String jwt = jwtService.generarToken(persona, generarExtraClaims(persona));
+
+        return new LoginResponse(jwt);
     }
 
     private Map<String, Object> generarExtraClaims(Persona persona) {
@@ -64,6 +74,7 @@ public class AuthService {
         extraClaims.put("id", persona.getId());
         extraClaims.put("nombre", persona.getNombre() + " " + persona.getApellido());
         extraClaims.put("rol", persona.getRol().name());
+        extraClaims.put("sessionId", persona.getSessionId());
         return extraClaims;
     }
 

@@ -47,6 +47,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (correo != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Persona persona = personaService.getPersonaByCorreo(correo);
 
+            String sessionId = jwtService.extractSessionId(token);
+            String sessionIdActual = persona.getSessionId();
+
+            if(!sessionIdActual.equals(sessionId)){
+                response.setContentType("application/json; charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Sesion invalida: el usuario ya inicio sesión en otro lugar.");
+                return;
+            }
             // Verificamos que el token sea válido para ese usuario
             if (jwtService.isvalid(token, persona)) {
                 UsernamePasswordAuthenticationToken authToken =
