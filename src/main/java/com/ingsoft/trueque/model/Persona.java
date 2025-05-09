@@ -42,6 +42,7 @@ public class Persona implements UserDetails {
     @Enumerated(EnumType.STRING)
     @NotNull
     private Rol rol;
+    private String sessionId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

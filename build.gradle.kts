@@ -40,6 +40,9 @@ dependencies {
 	// MapStruct
 	implementation("org.mapstruct:mapstruct:1.6.3")
 
+	//swagger
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
+
 	testImplementation("org.springframework.security:spring-security-test")
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
