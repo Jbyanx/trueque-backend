@@ -57,3 +57,6 @@ config/: Seguridad y configuración general
 
 ### 🐘 Flyway
 Cada versión del esquema se encuentra en src/main/resources/db/migration.
+
+### 🐘 Swagger
+Documentacion minima de todos los endpoints del proyecto
