@@ -70,19 +70,17 @@ public class ArticuloServiceImpl implements ArticuloService {
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen) {
-        //Categoria categoria = categoriaRepository.getCategoriaById(articulo.idCategoria())
-        Categoria categoria = categoriaRepository.getCategoriaById(1L)
+        Categoria categoria = categoriaRepository.getCategoriaById(articulo.getIdCategoria())
                 .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria "+ articulo.getIdCategoria()+", no encontrada en BD"));
 
-        //Usuario propietario = usuarioRepository.getUsuarioById(articulo.idPropietario())
-        Persona propietario = (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Persona propietario = obtenerPrincipal();
 
         Articulo articuloToSave = articuloMapper.toArticulo(articulo);
         articuloToSave.setCategoria(categoria);
         articuloToSave.setEstado(EstadoArticulo.DISPONIBLE);
         articuloToSave.setPropietario((Usuario) propietario);
 
-        if(imagen !=null){
+        if(imagen != null){
             try{
                 if (imagen != null && !imagen.isEmpty()) {
                     String rutaImagen = fileStorageService.guardarImagen(imagen);
@@ -97,7 +95,7 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
     /***
-     * Cambiar nombre, descripcion e imagen del articulo (NO CAMBIA AL PROPIETARIO)
+     * Cambiar nombre, descripcion e imagen del articulo
      */
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
@@ -139,8 +137,11 @@ public class ArticuloServiceImpl implements ArticuloService {
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteArticuloById(Long id) {
-        if(articuloRepository.existsById(id))
+        if(articuloRepository.existsById(id)){
             articuloRepository.deleteById(id);
+        }else{
+            throw new ArticuloNotFoundException("El articulo no se puede eliminar porque no existe en BD ID:"+id);
+        }
     }
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
@@ -149,7 +150,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         Articulo articulo = articuloRepository.findById(id)
                 .orElseThrow(() -> new ArticuloNotFoundException("Error al eliminar el artículo con id " + id + ", no encontrado en BD"));
 
-        Persona actual = (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Persona actual = obtenerPrincipal();
 
         boolean esPropietario = actual.getId().equals(articulo.getPropietario().getId());
         boolean esAdmin = actual.getRol().equals(Rol.ADMINISTRADOR);

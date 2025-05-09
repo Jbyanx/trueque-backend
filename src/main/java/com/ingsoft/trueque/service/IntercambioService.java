@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface IntercambioService {
+
     Page<GetIntercambio> getAllIntercambios(Pageable pageable);
     List<GetIntercambio> getIntercambiosByUsuarioIdAndEstado(Long id, EstadoIntercambio estadoIntercambio);
     GetIntercambio getIntercambioById(Long id);
@@ -16,9 +17,7 @@ public interface IntercambioService {
     GetIntercambio updateEstadoById(Long id, EstadoIntercambio estado);
     void deleteIntercambioById(Long id);
 
-    GetIntercambio aceptarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio);
-
-    GetIntercambio rechazarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio);
-
-    GetIntercambio cancelarIntercambio(Long usuarioId, Long intercambioId, EstadoIntercambio estadoIntercambio);
+    GetIntercambio aceptarIntercambio(Long intercambioId);
+    GetIntercambio rechazarIntercambio(Long intercambioId);
+    GetIntercambio cancelarIntercambio(Long intercambioId);
 }
