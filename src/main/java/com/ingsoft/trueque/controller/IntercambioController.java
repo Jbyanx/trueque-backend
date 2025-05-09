@@ -23,11 +23,21 @@ import java.util.List;
 public class IntercambioController {
     private final IntercambioService intercambioService;
 
+    /***
+     * Todos con todos
+     * @param pageable
+     * @return
+     */
     @GetMapping
     public ResponseEntity<Page<GetIntercambio>> getAllIntercambios(Pageable pageable){
         return ResponseEntity.ok(intercambioService.getAllIntercambios(pageable));
     }
 
+    /***
+     * obtener un intercambio teniendo su id
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<GetIntercambio> getIntercambioById(@PathVariable Long id){
         return ResponseEntity.ok(intercambioService.getIntercambioById(id));
@@ -44,32 +54,6 @@ public class IntercambioController {
         return ResponseEntity.ok(intercambioService.getIntercambiosByUsuarioIdAndEstado(usuarioId, estado));
     }
 
-    @PutMapping("/usuarios/{usuarioId}/{intercambioId}/aceptar")
-    public ResponseEntity<GetIntercambio> acceptIntercambio(@PathVariable Long usuarioId, @PathVariable Long intercambioId){
-        GetIntercambio intercambioAceptado = intercambioService.aceptarIntercambio(usuarioId,intercambioId, EstadoIntercambio.ACEPTADO);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/intercambios/{id}")
-                .buildAndExpand(intercambioId)
-                .toUri();
-        return ResponseEntity.status(HttpStatus.OK).location(location).body(intercambioAceptado);
-    }
-
-    @PutMapping("/usuarios/{usuarioId}/{intercambioId}/rechazar")
-    public ResponseEntity<GetIntercambio> rejectIntercambio(@PathVariable Long usuarioId, @PathVariable Long intercambioId){
-        GetIntercambio intercambioRechazado = intercambioService.rechazarIntercambio(usuarioId,intercambioId, EstadoIntercambio.RECHAZADO);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/intercambios/{id}")
-                .buildAndExpand(intercambioId)
-                .toUri();
-        return ResponseEntity.status(HttpStatus.OK).location(location).body(intercambioRechazado);
-    }
-
-    @PutMapping("/usuarios/{usuarioId}/{intercambioId}/cancelar")
-    public ResponseEntity<GetIntercambio> cancelIntercambio(@PathVariable Long usuarioId, @PathVariable Long intercambioId){
-        GetIntercambio intercambioCancelado = intercambioService.cancelarIntercambio(usuarioId,intercambioId, EstadoIntercambio.CANCELADO);
-        return ResponseEntity.ok(intercambioCancelado);
-    }
-
     @PostMapping
     public ResponseEntity<GetIntercambio> solicitarIntercambio(@ModelAttribute @Valid SaveIntercambio intercambio){
         GetIntercambio intercambioSaved = intercambioService.solicitarIntercambio(intercambio);
@@ -79,6 +63,33 @@ public class IntercambioController {
                 .toUri();
         return ResponseEntity.created(createdIntercambio).body(intercambioSaved);
     }
+
+    @PatchMapping("/{intercambioId}/aceptar")
+    public ResponseEntity<GetIntercambio> acceptIntercambio(@PathVariable Long intercambioId){
+        GetIntercambio intercambioAceptado = intercambioService.aceptarIntercambio(intercambioId);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/intercambios/{id}")
+                .buildAndExpand(intercambioId)
+                .toUri();
+        return ResponseEntity.status(HttpStatus.OK).location(location).body(intercambioAceptado);
+    }
+
+    @PatchMapping("/{intercambioId}/rechazar")
+    public ResponseEntity<GetIntercambio> rejectIntercambio(@PathVariable Long intercambioId){
+        GetIntercambio intercambioRechazado = intercambioService.rechazarIntercambio(intercambioId);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/intercambios/{id}")
+                .buildAndExpand(intercambioId)
+                .toUri();
+        return ResponseEntity.status(HttpStatus.OK).location(location).body(intercambioRechazado);
+    }
+
+    @PatchMapping("/{intercambioId}/cancelar")
+    public ResponseEntity<GetIntercambio> cancelIntercambio(@PathVariable Long intercambioId){
+        GetIntercambio intercambioCancelado = intercambioService.cancelarIntercambio(intercambioId);
+        return ResponseEntity.ok(intercambioCancelado);
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<GetIntercambio> updateEstado(@PathVariable Long id,

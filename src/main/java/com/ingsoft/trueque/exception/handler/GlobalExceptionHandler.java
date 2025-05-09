@@ -42,19 +42,6 @@ public class GlobalExceptionHandler {
                 )
         );
     }
-
-    @ExceptionHandler(AdministradorNotFoundException.class)
-    public ResponseEntity<ApiError> handleAdministradorNotFoundException(AdministradorNotFoundException e){
-        return ResponseEntity.badRequest().body(
-                new  ApiError(
-                        HttpStatus.NOT_FOUND,
-                        e.getMessage(),
-                        e.getLocalizedMessage(),
-                        LocalDateTime.now()
-                )
-        );
-    }
-
     @ExceptionHandler(ArticuloNotFoundException.class)
     public ResponseEntity<ApiError> handleArticuloNotFoundException(ArticuloNotFoundException e){
         return ResponseEntity.badRequest().body(

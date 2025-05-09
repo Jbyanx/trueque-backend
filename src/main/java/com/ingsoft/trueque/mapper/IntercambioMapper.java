@@ -14,12 +14,13 @@ public interface IntercambioMapper {
     @Mapping(target = "usuarioDos", source = "usuarioDos.nombre")
     @Mapping(target = "articuloUno", source = "articuloUno.nombre")
     @Mapping(target = "articuloDos", source = "articuloDos.nombre")
+    @Mapping(target = "idIntercambioPadre", source = "intercambioPadre.id")
     GetIntercambio toGetIntercambio(Intercambio intercambio);
 
-    @Mapping(target = "usuarioUno.id", source = "idUsuarioUno")
     @Mapping(target = "usuarioDos.id", source = "idUsuarioDos")
     @Mapping(target = "articuloUno.id", source = "idArticuloUno")
     @Mapping(target = "articuloDos.id", source = "idArticuloDos")
+    @Mapping(target = "intercambioPadre.id", source = "idIntercambioPadre")
     Intercambio toIntercambio(SaveIntercambio saveIntercambio);
 
     List<GetIntercambio> toGetIntercambioList(List<Intercambio> intercambioList);

@@ -44,4 +44,9 @@ public class Intercambio {
     @OneToOne
     @JoinColumn(name = "id_articulo_dos", nullable = false)
     private Articulo articuloDos;
+
+    @ManyToOne
+    @JoinColumn(name = "id_padre")
+    private Intercambio intercambioPadre;
+
 }

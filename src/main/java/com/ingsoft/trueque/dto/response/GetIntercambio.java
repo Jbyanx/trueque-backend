@@ -10,6 +10,7 @@ public record GetIntercambio(
         String usuarioUno,
         String usuarioDos,
         String articuloUno,
-        String articuloDos
+        String articuloDos,
+        Long idIntercambioPadre
 ) implements Serializable {
 }

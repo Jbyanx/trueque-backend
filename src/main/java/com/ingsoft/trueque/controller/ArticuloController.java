@@ -27,6 +27,8 @@ public class ArticuloController {
         return ResponseEntity.ok(articuloService.getAllArticulosDisponibles(filtros, pageable));
     }
 
+    //TODO crear metodo getarticulos disponibles by usuario id
+
     @GetMapping("/mis-articulos")
     public ResponseEntity<Page<GetArticulo>> obtenerMisArticulos(Pageable pageable){
         return ResponseEntity.ok(articuloService.obtenerMisArticulos(pageable));
