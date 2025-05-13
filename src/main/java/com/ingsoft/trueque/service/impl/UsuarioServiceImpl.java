@@ -146,7 +146,9 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .map( i -> intercambioMapper.toGetIntercambioSimple(i))
                 .collect(Collectors.toList());
 
+        Double reputacion = usuarioRepository.obtenerReputacionDelUsuario(id);
+
         String nombreCompleto = persona.getNombre()+" "+persona.getApellido();
-        return new GetPerfilUsuario(nombreCompleto, intercambioSimples);
+        return new GetPerfilUsuario(nombreCompleto, reputacion ,intercambioSimples);
     }
 }

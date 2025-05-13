@@ -2,6 +2,7 @@ package com.ingsoft.trueque.service.impl;
 
 import com.ingsoft.trueque.dto.request.SaveResenha;
 import com.ingsoft.trueque.dto.response.GetResenha;
+import com.ingsoft.trueque.exception.AccesoNoPermitidoException;
 import com.ingsoft.trueque.exception.LogicaNegocioException;
 import com.ingsoft.trueque.exception.ResenhaNotFoundException;
 import com.ingsoft.trueque.mapper.ResenhaMapper;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -59,6 +61,19 @@ public class ResenhaServiceImpl implements ResenhaService {
             throw new LogicaNegocioException("No puedes guardar una reseña para el mismo usuario que la crea");
         }
 
+        if (!usuarioCalificante.getId().equals(intercambio.getUsuarioUno().getId()) &&
+                !usuarioCalificante.getId().equals(intercambio.getUsuarioDos().getId())) {
+            throw new LogicaNegocioException("No puedes hacer una resenha a un intercambio en el que no participas");
+        }
+
+        boolean yaResenho = resenhaRepository.existsByIntercambioIdAndUsuarioCalificanteId(
+                idIntercambio, resenha.getIdUsuarioCalificante());
+
+        if (yaResenho) {
+            throw new LogicaNegocioException("Ya has dejado una reseña para este intercambio");
+        }
+
+
         Resenha resenhaToSave = resenhaMapper.toResenha(resenha);
         resenhaToSave.setUsuarioCalificado(usuarioCalificado);
         resenhaToSave.setUsuarioCalificante(usuarioCalificante);
@@ -83,28 +98,48 @@ public class ResenhaServiceImpl implements ResenhaService {
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
-    public GetResenha updateResenhaById(Long id, SaveResenha resenha) {
-        Resenha resenhaSaved = resenhaRepository.findById(id)
-                .orElseThrow(() -> new ResenhaNotFoundException("Error al obtener la resenha con id "+id+", no existe en BD"));
+    public GetResenha updateResenhaById(Long id, SaveResenha nuevaResenha) {
+        Resenha resenhaExistente = resenhaRepository.findById(id)
+                .orElseThrow(() -> new ResenhaNotFoundException("No existe una reseña con ID " + id));
 
-        updateResenha(resenhaSaved, resenha);
-        return resenhaMapper.toGetResenha(resenhaRepository.save(resenhaSaved));
+        validarPermisoDeActualizacion(resenhaExistente);
+
+        actualizarCamposResenha(resenhaExistente, nuevaResenha);
+
+        Resenha resenhaActualizada = resenhaRepository.save(resenhaExistente);
+        return resenhaMapper.toGetResenha(resenhaActualizada);
     }
 
-    private void updateResenha(Resenha resenhaSaved, SaveResenha resenha) {
-        if(StringUtils.hasText(resenha.getDescripcion())){
-            resenhaSaved.setDescripcion(resenha.getDescripcion());
-        }
-        if(resenha.getPuntuacion() != null && resenha.getPuntuacion() > 0 && resenha.getPuntuacion()<= 5){
-            resenhaSaved.setPuntuacion(resenha.getPuntuacion());
+    private void validarPermisoDeActualizacion(Resenha resenha) {
+        Usuario actual = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!resenha.getUsuarioCalificante().getId().equals(actual.getId())) {
+            throw new AccesoNoPermitidoException("Solo el autor de la reseña puede actualizarla.");
         }
     }
+
+    private void actualizarCamposResenha(Resenha resenha, SaveResenha nuevaResenha) {
+        if (StringUtils.hasText(nuevaResenha.getDescripcion())) {
+            resenha.setDescripcion(nuevaResenha.getDescripcion().trim());
+        }
+
+        if (nuevaResenha.getPuntuacion() != null) {
+            int puntuacion = nuevaResenha.getPuntuacion();
+            if (puntuacion >= 1 && puntuacion <= 5) {
+                resenha.setPuntuacion(puntuacion);
+            } else {
+                throw new IllegalArgumentException("La puntuación debe estar entre 1 y 5.");
+            }
+        }
+    }
+
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteResenhaById(Long id) {
         if(resenhaRepository.existsById(id)){
             resenhaRepository.deleteById(id);
+        } else{
+            throw new ResenhaNotFoundException("error al eliminar, la resenha no existe");
         }
     }
 }
