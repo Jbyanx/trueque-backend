@@ -2,17 +2,21 @@ package com.ingsoft.trueque.service.impl;
 
 import com.ingsoft.trueque.dto.request.SaveUsuario;
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
-import com.ingsoft.trueque.dto.response.GetArticulo;
-import com.ingsoft.trueque.dto.response.GetReputacion;
-import com.ingsoft.trueque.dto.response.GetUsuario;
+import com.ingsoft.trueque.dto.response.*;
 import com.ingsoft.trueque.exception.InvalidPasswordException;
 import com.ingsoft.trueque.exception.UsuarioNotFoundException;
 import com.ingsoft.trueque.mapper.ArticuloMapper;
+import com.ingsoft.trueque.mapper.IntercambioMapper;
+import com.ingsoft.trueque.mapper.PersonaMapper;
 import com.ingsoft.trueque.mapper.UsuarioMapper;
+import com.ingsoft.trueque.model.Persona;
 import com.ingsoft.trueque.model.Usuario;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
+import com.ingsoft.trueque.model.util.EstadoIntercambio;
 import com.ingsoft.trueque.model.util.Rol;
 import com.ingsoft.trueque.repository.ArticuloRepository;
+import com.ingsoft.trueque.repository.IntercambioRepository;
+import com.ingsoft.trueque.repository.PersonaRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +27,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +39,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final ArticuloRepository articuloRepository;
     private final ArticuloMapper articuloMapper;
     private final PasswordEncoder passwordEncoder;
+    private final IntercambioRepository intercambioRepository;
+    private final IntercambioMapper intercambioMapper;
+    private final PersonaRepository personaRepository;
+    private final PersonaMapper personaMapper;
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
@@ -126,5 +136,17 @@ public class UsuarioServiceImpl implements UsuarioService {
                 Optional.ofNullable(usuarioRepository.obtenerReputacionDelUsuario(idUsuario)).orElse(0.0),
                 usuarioRepository.totalResenhasDelUsuario(idUsuario)
                 );
+    }
+
+    @Override
+    public GetPerfilUsuario getUserProfile(Long id) {
+        Persona persona = personaRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNotFoundException("Error al obtener el perfil de la persona, porque no existe en BD"));
+        List<GetIntercambioSimple> intercambioSimples = intercambioRepository.getIntercambiosByUsuarioIdAndEstado(persona.getId(), EstadoIntercambio.REALIZADO).stream()
+                .map( i -> intercambioMapper.toGetIntercambioSimple(i))
+                .collect(Collectors.toList());
+
+        String nombreCompleto = persona.getNombre()+" "+persona.getApellido();
+        return new GetPerfilUsuario(nombreCompleto, intercambioSimples);
     }
 }
