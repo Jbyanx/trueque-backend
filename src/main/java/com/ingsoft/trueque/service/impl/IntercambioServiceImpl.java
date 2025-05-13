@@ -17,12 +17,14 @@ import com.ingsoft.trueque.service.IntercambioService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,19 +41,19 @@ public class IntercambioServiceImpl implements IntercambioService {
                 .map(intercambioMapper::toGetIntercambio);
     }
 
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public List<GetIntercambio> getIntercambiosByUsuarioIdAndEstado(Long id, EstadoIntercambio estadoIntercambio) {
         List<Intercambio> historial;
         if(estadoIntercambio != null){
-            historial = intercambioRepository.historialIntercambiosByIdUsuarioAndEstado(id, estadoIntercambio);
+            historial = intercambioRepository.getIntercambiosByUsuarioIdAndEstado(id, estadoIntercambio);
         }else{
-            historial = intercambioRepository.historialIntercambiosDelUsuario(id);
+            historial = intercambioRepository.getAllIntercambiosByUsuarioId(id);
         }
         return intercambioMapper.toGetIntercambioList(historial);
     }
 
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('USUARIO')")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetIntercambio getIntercambioById(Long id) {
         return intercambioRepository.findById(id)
@@ -150,6 +152,18 @@ public class IntercambioServiceImpl implements IntercambioService {
         updateEstadoIntercambio(intercambio, EstadoIntercambio.CANCELADO);
 
         return intercambioMapper.toGetIntercambio(intercambio);
+    }
+
+    @PreAuthorize("hasRole('USUARIO')")
+    @Override
+    public Page<GetIntercambio> getMisIntercambios(Pageable pageable) {
+        Usuario actual = (Usuario) obtenerPrincipal();
+
+        List<GetIntercambio> intercambios = intercambioRepository.getAllIntercambiosByUsuarioId(actual.getId()).stream()
+                .map(e -> intercambioMapper.toGetIntercambio(e))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(intercambios, pageable, intercambios.size());
     }
 
 

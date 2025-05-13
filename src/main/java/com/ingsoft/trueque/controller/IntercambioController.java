@@ -24,7 +24,7 @@ public class IntercambioController {
     private final IntercambioService intercambioService;
 
     /***
-     * Todos con todos
+     * Todos los intercambios con todos los estados
      * @param pageable
      * @return
      */
@@ -36,14 +36,14 @@ public class IntercambioController {
     /***
      * obtener un intercambio teniendo su id
      * @param id
-     * @return
+     * @return intercambios con cualquier estado
      */
     @GetMapping("/{id}")
     public ResponseEntity<GetIntercambio> getIntercambioById(@PathVariable Long id){
         return ResponseEntity.ok(intercambioService.getIntercambioById(id));
     }
 
-    /***
+    /***ADMINS
      * Mediante esta funcion se consultan los intercambios por idUsuario, y con el parametro EstadoIntercambio
      * enviamos que estados queremos consultar, si el parametro no se envia los trae todos
      */
@@ -52,6 +52,11 @@ public class IntercambioController {
     public ResponseEntity<List<GetIntercambio>> getIntercambiosByUsuarioIdAndEstado(@PathVariable Long usuarioId,
                                                                     @RequestParam(required = false) EstadoIntercambio estado){
         return ResponseEntity.ok(intercambioService.getIntercambiosByUsuarioIdAndEstado(usuarioId, estado));
+    }
+
+    @GetMapping("/todos-mis-intercambios")
+    public ResponseEntity<Page<GetIntercambio>> obtenerTodosMisIntercambios(Pageable pageable){
+        return ResponseEntity.ok(intercambioService.getMisIntercambios(pageable));
     }
 
     @PostMapping
