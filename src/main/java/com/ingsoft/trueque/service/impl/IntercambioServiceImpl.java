@@ -166,6 +166,16 @@ public class IntercambioServiceImpl implements IntercambioService {
         return new PageImpl<>(intercambios, pageable, intercambios.size());
     }
 
+    @PreAuthorize("hasRole('USUARIO')")
+    @Override
+    public Page<GetIntercambio> getMisIntercambiosExitosos(Pageable pageable) {
+        Usuario actual = (Usuario) obtenerPrincipal();
+        List<GetIntercambio> intercambios =  intercambioRepository.getIntercambiosByUsuarioIdAndEstado(actual.getId(),EstadoIntercambio.REALIZADO).stream()
+                .map(e -> intercambioMapper.toGetIntercambio(e))
+                .collect(Collectors.toList());
+        return new PageImpl<>(intercambios, pageable, intercambios.size());
+    }
+
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override

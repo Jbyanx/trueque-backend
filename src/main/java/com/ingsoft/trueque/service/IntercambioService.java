@@ -22,4 +22,6 @@ public interface IntercambioService {
     GetIntercambio cancelarIntercambio(Long intercambioId);
 
     Page<GetIntercambio> getMisIntercambios(Pageable pageable);
+
+    Page<GetIntercambio> getMisIntercambiosExitosos(Pageable pageable);
 }

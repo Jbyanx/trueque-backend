@@ -58,6 +58,10 @@ public class IntercambioController {
     public ResponseEntity<Page<GetIntercambio>> obtenerTodosMisIntercambios(Pageable pageable){
         return ResponseEntity.ok(intercambioService.getMisIntercambios(pageable));
     }
+    @GetMapping("/mis-intercambios-exitosos")
+    public ResponseEntity<Page<GetIntercambio>> obtenerMisIntercambiosExitosos(Pageable pageable){
+        return ResponseEntity.ok(intercambioService.getMisIntercambiosExitosos(pageable));
+    }
 
     @PostMapping
     public ResponseEntity<GetIntercambio> solicitarIntercambio(@ModelAttribute @Valid SaveIntercambio intercambio){
