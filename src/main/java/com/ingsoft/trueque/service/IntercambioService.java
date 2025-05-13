@@ -13,11 +13,15 @@ public interface IntercambioService {
     Page<GetIntercambio> getAllIntercambios(Pageable pageable);
     List<GetIntercambio> getIntercambiosByUsuarioIdAndEstado(Long id, EstadoIntercambio estadoIntercambio);
     GetIntercambio getIntercambioById(Long id);
-    GetIntercambio solicitarIntercambio(SaveIntercambio intercambio);
     GetIntercambio updateEstadoById(Long id, EstadoIntercambio estado);
     void deleteIntercambioById(Long id);
 
+    GetIntercambio solicitarIntercambio(SaveIntercambio intercambio);
     GetIntercambio aceptarIntercambio(Long intercambioId);
     GetIntercambio rechazarIntercambio(Long intercambioId);
     GetIntercambio cancelarIntercambio(Long intercambioId);
+
+    Page<GetIntercambio> getMisIntercambios(Pageable pageable);
+
+    Page<GetIntercambio> getMisIntercambiosExitosos(Pageable pageable);
 }

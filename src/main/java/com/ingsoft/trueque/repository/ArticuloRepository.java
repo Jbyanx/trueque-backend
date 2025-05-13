@@ -1,5 +1,6 @@
 package com.ingsoft.trueque.repository;
 
+import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import org.springframework.data.domain.Page;
@@ -38,4 +39,7 @@ public interface ArticuloRepository extends JpaRepository<Articulo, Long>, JpaSp
 
     @Query("select a from Articulo a where a.estado = 'DISPONIBLE'")
     Page<Articulo> findAllByEstado(Specification<Articulo> spec, Pageable pageable, EstadoArticulo estadoArticulo);
+
+    @Query("select a from Articulo a where a.propietario.id = ?1 and a.estado = 'DISPONIBLE'")
+    Page<Articulo> getArticulosDisponiblesByUsuarioId(Long id, Pageable pageable);
 }

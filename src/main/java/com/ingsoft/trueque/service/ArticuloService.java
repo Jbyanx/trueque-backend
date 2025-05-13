@@ -16,4 +16,6 @@ public interface ArticuloService {
     void deleteArticuloById(Long id);
     GetArticulo eliminadoLogico(Long id);
     Page<GetArticulo> obtenerMisArticulos(Pageable pageable);
+
+    Page<GetArticulo> getAllArticulosDisponiblesByUsuarioId(Pageable pageable, Long id);
 }
