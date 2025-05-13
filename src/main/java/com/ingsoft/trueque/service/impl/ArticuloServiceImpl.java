@@ -176,6 +176,16 @@ public class ArticuloServiceImpl implements ArticuloService {
         return new PageImpl<>(articulosFiltrados, pageable, articulosFiltrados.size());
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Override
+    public Page<GetArticulo> getAllArticulosDisponiblesByUsuarioId(Pageable pageable, Long id) {
+        Usuario usuario = usuarioRepository.getUsuarioById(id)
+                        .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado en BD"));
+
+        return articuloRepository.getArticulosDisponiblesByUsuarioId(id, pageable)
+                .map(a -> articuloMapper.toGetArticulo(a));
+    }
+
 
     private Persona obtenerPrincipal() {
         return (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

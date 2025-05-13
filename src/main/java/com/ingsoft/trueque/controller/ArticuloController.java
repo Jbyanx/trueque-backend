@@ -26,6 +26,10 @@ public class ArticuloController {
                                                                         Pageable pageable){
         return ResponseEntity.ok(articuloService.getAllArticulosDisponibles(filtros, pageable));
     }
+    @GetMapping("/usuarios/{id}")
+    public ResponseEntity<Page<GetArticulo>> getAllArticulosDisponiblesByusuarioId(Pageable pageable, @PathVariable Long id){
+        return ResponseEntity.ok(articuloService.getAllArticulosDisponiblesByUsuarioId(pageable, id));
+    }
 
     //TODO crear metodo getarticulos disponibles by usuario id
 
