@@ -3,6 +3,7 @@ package com.ingsoft.trueque.service.impl;
 import com.ingsoft.trueque.dto.request.SaveUsuario;
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
 import com.ingsoft.trueque.dto.response.*;
+import com.ingsoft.trueque.exception.AccesoNoPermitidoException;
 import com.ingsoft.trueque.exception.InvalidPasswordException;
 import com.ingsoft.trueque.exception.UsuarioNotFoundException;
 import com.ingsoft.trueque.mapper.ArticuloMapper;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -91,6 +93,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuarioSaved = usuarioRepository.getUsuarioById(id)
                 .orElseThrow(() -> new UsuarioNotFoundException("Error al buscar el usuario con id "+id+", no existe en BD"));
 
+        Usuario actual = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!actual.getRol().equals(Rol.ADMINISTRADOR) && !actual.getId().equals(id)){
+            throw new AccesoNoPermitidoException("Solo el mismo usuario o un administrador puede realizar esta accion");
+        }
         updateUsuario(usuarioSaved, usuario);
         return usuarioMapper.toGetUsuario(usuarioRepository.save(usuarioSaved));
     }
@@ -101,9 +108,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         if(StringUtils.hasText(usuario.getApellido())){
             usuarioSaved.setApellido(usuario.getApellido());
-        }
-        if(StringUtils.hasText(usuario.getCorreo())){
-            usuarioSaved.setCorreo(usuario.getCorreo());
         }
     }
 
