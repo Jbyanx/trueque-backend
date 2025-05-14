@@ -14,6 +14,7 @@ import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.IntercambioRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.IntercambioService;
+import com.ingsoft.trueque.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class IntercambioServiceImpl implements IntercambioService {
     private final IntercambioMapper intercambioMapper;
     private final UsuarioRepository usuarioRepository;
     private final ArticuloRepository articuloRepository;
+    private final NotificationService notificationService;
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
@@ -88,6 +90,12 @@ public class IntercambioServiceImpl implements IntercambioService {
             intercambioToSave.setIntercambioPadre(padre);
             intercambioToSave.setEstado(EstadoIntercambio.EN_NEGOCIACION);
         }
+
+        //Notificación WebSocket
+        String  notificacion = "¡Tienes una nueva solicitud!"+
+                propietario.getNombre() + " te ha propuesto un intercambio.";
+
+        notificationService.notificar(usuarioDos.getCorreo(), notificacion);
 
         return intercambioMapper.toGetIntercambio(intercambioRepository.save(intercambioToSave));
     }
