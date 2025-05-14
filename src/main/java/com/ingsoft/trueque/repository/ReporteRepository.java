@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface ReporteRepository extends JpaRepository<Reporte, Long> {
     Page<Reporte> findAllByEstado(EstadoReporte estado, Pageable pageable);
     Page<Reporte> findAllByUsuarioNombre(String nombre, Pageable pageable);
+
+    int countByEstado(EstadoReporte estadoReporte);
 }

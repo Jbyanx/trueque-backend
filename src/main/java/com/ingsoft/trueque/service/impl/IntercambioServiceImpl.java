@@ -89,13 +89,23 @@ public class IntercambioServiceImpl implements IntercambioService {
             validarIntercambioPadre(padre);
             intercambioToSave.setIntercambioPadre(padre);
             intercambioToSave.setEstado(EstadoIntercambio.EN_NEGOCIACION);
+
+            //Notificación WebSocket
+            String  notificacion = "¡Tienes una negociacion de intercambio!"+
+                    propietario.getNombre() + " te ha propuesto negociar con otro articulo.";
+
+            notificationService.notificar(usuarioDos.getCorreo(), notificacion);
+        } else{
+
+            //Notificación WebSocket
+            String  notificacion = "¡Tienes una nueva solicitud!"+
+                    propietario.getNombre() + " te ha propuesto un intercambio.";
+
+            notificationService.notificar(usuarioDos.getCorreo(), notificacion);
+
         }
 
-        //Notificación WebSocket
-        String  notificacion = "¡Tienes una nueva solicitud!"+
-                propietario.getNombre() + " te ha propuesto un intercambio.";
 
-        notificationService.notificar(usuarioDos.getCorreo(), notificacion);
 
         return intercambioMapper.toGetIntercambio(intercambioRepository.save(intercambioToSave));
     }
@@ -116,6 +126,13 @@ public class IntercambioServiceImpl implements IntercambioService {
         }
 
         updateEstadoIntercambio(intercambio, EstadoIntercambio.ACEPTADO);
+
+        //Notificación WebSocket
+        String  notificacion = "¡Han aceptado tu solicitud de intercambio!"+
+                actual.getNombre() + " ha aceptado tu solicitud de intercambio.";
+
+        notificationService.notificar(intercambio.getUsuarioDos().getCorreo(), notificacion);
+
         return intercambioMapper.toGetIntercambio(intercambio);
     }
 
@@ -124,6 +141,11 @@ public class IntercambioServiceImpl implements IntercambioService {
             throw new IllegalArgumentException("el estado no puede ser null");
         }
             intercambioToUpdate.setEstado(estadoIntercambio);
+
+        //Notificación WebSocket
+        String  notificacion = "¡Se ha actualizado tu solicitud de intercambio!";
+
+        notificationService.notificar(intercambioToUpdate.getUsuarioUno().getCorreo(), notificacion);
     }
 
     @PreAuthorize("hasRole('USUARIO')")
@@ -141,6 +163,13 @@ public class IntercambioServiceImpl implements IntercambioService {
         }
 
         updateEstadoIntercambio(intercambio, EstadoIntercambio.RECHAZADO);
+
+        //Notificación WebSocket
+        String  notificacion = "¡Han rechazado tu solicitud de intercambio!"+
+                actual.getNombre() + " ha rechazado tu solicitud de intercambio.";
+
+        notificationService.notificar(intercambio.getUsuarioDos().getCorreo(), notificacion);
+
         return intercambioMapper.toGetIntercambio(intercambio);
     }
 
@@ -158,6 +187,12 @@ public class IntercambioServiceImpl implements IntercambioService {
             throw new LogicaNegocioException("Solo puede cancelar el intercambio un usuario que participe en dicho intercambio");
         }
         updateEstadoIntercambio(intercambio, EstadoIntercambio.CANCELADO);
+
+        //Notificación WebSocket
+        String  notificacion = "¡Han cancelado tu solicitud de intercambio!"+
+                actual.getNombre() + " ha aceptado tu solicitud de intercambio.";
+
+        notificationService.notificar(intercambio.getUsuarioDos().getCorreo(), notificacion);
 
         return intercambioMapper.toGetIntercambio(intercambio);
     }

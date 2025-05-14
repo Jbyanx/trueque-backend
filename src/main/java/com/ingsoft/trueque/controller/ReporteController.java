@@ -2,6 +2,7 @@ package com.ingsoft.trueque.controller;
 
 import com.ingsoft.trueque.dto.request.SaveReporte;
 import com.ingsoft.trueque.dto.response.GetReporte;
+import com.ingsoft.trueque.dto.response.PlataformaReporteResumen;
 import com.ingsoft.trueque.service.ReporteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,4 +52,15 @@ public class ReporteController {
         reporteService.deleteReporteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/reporte-de-actividad")
+    public ResponseEntity<PlataformaReporteResumen> getReporteDeActividad(){
+        return ResponseEntity.ok(reporteService.getResumenActividad());
+    }
+
+    @PutMapping("/{idReporte}/eliminar-articulo")
+    public ResponseEntity<String> putString(@PathVariable Long idReporte ) {
+        return ResponseEntity.ok(reporteService.eliminarArticuloReportado(idReporte));
+    }
+
 }

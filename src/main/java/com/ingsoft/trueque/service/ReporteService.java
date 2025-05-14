@@ -2,6 +2,7 @@ package com.ingsoft.trueque.service;
 
 import com.ingsoft.trueque.dto.request.SaveReporte;
 import com.ingsoft.trueque.dto.response.GetReporte;
+import com.ingsoft.trueque.dto.response.PlataformaReporteResumen;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,4 +14,7 @@ public interface ReporteService {
     GetReporte saveReporte(Long idArticulo, SaveReporte reporte);
     GetReporte updateReporteById(Long id, SaveReporte reporte);
     void deleteReporteById(Long id);
+
+    String  eliminarArticuloReportado(Long idReporte);
+    PlataformaReporteResumen getResumenActividad();
 }
