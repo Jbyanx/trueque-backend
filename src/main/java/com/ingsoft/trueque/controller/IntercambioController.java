@@ -99,6 +99,11 @@ public class IntercambioController {
         return ResponseEntity.ok(intercambioCancelado);
     }
 
+    @PutMapping("/{intercambioId}/confirmar-entrega")
+    public ResponseEntity<GetIntercambio> confirmarEntrega(@PathVariable Long intercambioId) {
+        return ResponseEntity.ok(intercambioService.confirmarEntrega(intercambioId));
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<GetIntercambio> updateEstado(@PathVariable Long id,

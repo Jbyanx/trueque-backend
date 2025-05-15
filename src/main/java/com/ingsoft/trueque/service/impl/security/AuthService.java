@@ -13,12 +13,15 @@ import com.ingsoft.trueque.repository.PersonaRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.UsuarioService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -34,6 +37,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository usuarioRepository;
     private final PersonaRepository personaRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public GetUsuarioRegistrado registrarUsuario(@Valid SaveUsuario usuarioNuevo) {
         Usuario usuario = usuarioService.saveUsuario(usuarioNuevo);
@@ -86,4 +90,13 @@ public class AuthService {
                 .orElseThrow(() -> new PersonaNotFoundException("Error al buscar al usuario autenticado, no encontrado en BD"));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public void resetPasswordByAdmin(Long idUsuario, @NotBlank String newPassword) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UsuarioNotFoundException("Error al resetear la contraseña, Usuario no encontrado"));
+
+        String hashedPassword = passwordEncoder.encode(newPassword);
+        usuario.setClave(hashedPassword);
+        usuarioRepository.save(usuario);
+    }
 }

@@ -1,11 +1,13 @@
 package com.ingsoft.trueque.controller;
 
+import com.ingsoft.trueque.dto.request.ResetPasswordRequest;
 import com.ingsoft.trueque.dto.request.UpdateUsuario;
 import com.ingsoft.trueque.dto.response.GetArticulo;
 import com.ingsoft.trueque.dto.response.GetReputacion;
 import com.ingsoft.trueque.dto.response.GetUsuario;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.service.UsuarioService;
+import com.ingsoft.trueque.service.impl.security.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioService usuarioService;
+    private final AuthService authService;
 
     @GetMapping("/{idUsuario}/articulos")
     public ResponseEntity<Page<GetArticulo>> getArticulosByUsuario(@PathVariable Long idUsuario,
@@ -50,6 +53,14 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id){
         usuarioService.deleteUsuarioById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{idUsuario}/reset-password")
+    public ResponseEntity<Void> resetPassword(@PathVariable Long idUsuario,
+                                              @RequestBody @Valid ResetPasswordRequest request) {
+
+        authService.resetPasswordByAdmin(idUsuario, request.newPassword());
         return ResponseEntity.noContent().build();
     }
 }

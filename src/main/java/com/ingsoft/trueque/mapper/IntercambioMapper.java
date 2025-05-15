@@ -12,11 +12,14 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface IntercambioMapper {
     @Mapping(target = "usuarioUno", source = "usuarioUno.nombre")
+    @Mapping(target = "telefonoUsuarioUno", source = "usuarioUno.telefono")
     @Mapping(target = "usuarioDos", source = "usuarioDos.nombre")
+    @Mapping(target = "telefonoUsuarioDos", source = "usuarioDos.telefono")
     @Mapping(target = "articuloUno", source = "articuloUno.nombre")
     @Mapping(target = "articuloDos", source = "articuloDos.nombre")
     @Mapping(target = "idIntercambioPadre", source = "intercambioPadre.id")
     GetIntercambio toGetIntercambio(Intercambio intercambio);
+
 
     @Mapping(target = "usuarioDos.id", source = "idUsuarioDos")
     @Mapping(target = "articuloUno.id", source = "idArticuloUno")

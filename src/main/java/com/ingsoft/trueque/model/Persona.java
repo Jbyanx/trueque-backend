@@ -37,6 +37,8 @@ public class Persona implements UserDetails {
     @Column(nullable = false, unique = true)
     @NotNull(message = "el correo no puede estar vacio")
     private String correo;
+    @Column(name = "telefono", nullable = false)
+    private String telefono;
     @NotBlank(message = "La contraseña no puede estar vacia")
     private String clave;
     @Enumerated(EnumType.STRING)

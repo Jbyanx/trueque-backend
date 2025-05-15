@@ -49,4 +49,10 @@ public class Intercambio {
     @JoinColumn(name = "id_padre")
     private Intercambio intercambioPadre;
 
+    @Column(nullable = false)
+    private Boolean confirmadoPorUsuarioUno;
+
+    @Column(nullable = false)
+    private Boolean confirmadoPorUsuarioDos;
+
 }
