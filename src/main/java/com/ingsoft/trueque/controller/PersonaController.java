@@ -7,8 +7,11 @@ import com.ingsoft.trueque.dto.response.GetUsuario;
 import com.ingsoft.trueque.model.Usuario;
 import com.ingsoft.trueque.service.PersonaService;
 import com.ingsoft.trueque.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,22 +21,26 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/personas")
 @RequiredArgsConstructor
+@Tag(
+        name = "Personas",
+        description = "Rest controller para las personas"
+)
 public class PersonaController {
     private final PersonaService personaService;
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<Page<GetPersona>> getAllPersonas(Pageable pageable){
+    public ResponseEntity<Page<GetPersona>> getAllPersonas(@ParameterObject Pageable pageable){
         return ResponseEntity.ok(personaService.getAllPersonas(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetPersona> getPersonaById(@PathVariable Long id){
+    public ResponseEntity<GetPersona> getPersonaById(@Parameter @PathVariable Long id){
         return ResponseEntity.ok(personaService.getPersonaById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePersona(@PathVariable Long id){
+    public ResponseEntity<Void> deletePersona(@Parameter @PathVariable Long id){
         personaService.getPersonaById(id);
         return ResponseEntity.noContent().build();
     }
@@ -45,7 +52,7 @@ public class PersonaController {
     }
 
     @GetMapping("/perfiles/{id}")
-    public ResponseEntity<GetPerfilUsuario> getPerfilUsuarioById(@PathVariable Long id){
+    public ResponseEntity<GetPerfilUsuario> getPerfilUsuarioById(@Parameter @PathVariable Long id){
         return ResponseEntity.ok(usuarioService.getUserProfile(id));
     }
 }
