@@ -10,6 +10,7 @@ import com.ingsoft.trueque.model.Persona;
 import com.ingsoft.trueque.model.Usuario;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.model.util.EstadoIntercambio;
+import com.ingsoft.trueque.model.util.Rol;
 import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.IntercambioRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
@@ -188,14 +189,47 @@ public class IntercambioServiceImpl implements IntercambioService {
         }
         updateEstadoIntercambio(intercambio, EstadoIntercambio.CANCELADO);
 
-        //Notificación WebSocket
-        String  notificacion = "¡Han cancelado tu solicitud de intercambio!"+
-                actual.getNombre() + " ha aceptado tu solicitud de intercambio.";
-
-        notificationService.notificar(intercambio.getUsuarioDos().getCorreo(), notificacion);
-
         return intercambioMapper.toGetIntercambio(intercambio);
     }
+
+    private void notificarCancelacion(Intercambio intercambio, Usuario quienCancelo) {
+        Usuario usuarioUno = intercambio.getArticuloUno().getPropietario();
+        Usuario usuarioDos = intercambio.getArticuloDos().getPropietario();
+
+        Usuario destinatario = usuarioUno.equals(quienCancelo) ? usuarioDos : usuarioUno;
+
+        //Notificación WebSocket
+        String  notificacion = "¡Han cancelado tu solicitud de intercambio!";
+
+        notificationService.notificar(destinatario.getCorreo(), notificacion);
+    }
+
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
+    public GetIntercambio confirmarEntrega(Long intercambioId) {
+        Intercambio intercambio = intercambioRepository.findById(intercambioId)
+                .orElseThrow(() -> new IntercambioNotFoundException("Error al confirmar la entrega, intercambio not found"));
+
+        Usuario actual = (Usuario) obtenerPrincipal();
+
+        if (!intercambio.getEstado().equals(EstadoIntercambio.ACEPTADO)) {
+            throw new LogicaNegocioException("Solo se puede confirmar entregas en intercambios aceptados.");
+        }
+
+        if(actual.getId().equals(intercambio.getUsuarioUno().getId())) {
+            intercambio.setConfirmadoPorUsuarioUno(true);
+        } else if(actual.getId().equals(intercambio.getUsuarioDos().getId())) {
+            intercambio.setConfirmadoPorUsuarioDos(true);
+        } else if(!actual.getRol().equals(Rol.ADMINISTRADOR)){
+            throw new AccesoNoPermitidoException("solo los participantes y administradores pueden confirmar la entrega");
+        }
+
+        if(intercambio.getConfirmadoPorUsuarioUno() && intercambio.getConfirmadoPorUsuarioDos()){
+            intercambio.setEstado(EstadoIntercambio.REALIZADO);
+        }
+
+        return intercambioMapper.toGetIntercambio(intercambioRepository.save(intercambio));
+    }
+
 
     @PreAuthorize("hasRole('USUARIO')")
     @Override

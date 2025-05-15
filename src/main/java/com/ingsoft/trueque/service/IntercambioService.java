@@ -17,6 +17,7 @@ public interface IntercambioService {
     void deleteIntercambioById(Long id);
 
     GetIntercambio solicitarIntercambio(SaveIntercambio intercambio);
+    GetIntercambio confirmarEntrega(Long intercambioId);
     GetIntercambio aceptarIntercambio(Long intercambioId);
     GetIntercambio rechazarIntercambio(Long intercambioId);
     GetIntercambio cancelarIntercambio(Long intercambioId);
