@@ -42,7 +42,7 @@ public class ArticuloController {
     }
 
     @PostMapping
-    public ResponseEntity<GetArticulo> crearArticulo(@RequestPart @Valid SaveArticulo articulo, @RequestPart MultipartFile file){
+    public ResponseEntity<GetArticulo> crearArticulo(@RequestPart("articulo") @Valid SaveArticulo articulo, @RequestPart("file") MultipartFile file){
         GetArticulo articuloSaved = articuloService.saveArticulo(articulo, file);
         URI createdArticulo = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

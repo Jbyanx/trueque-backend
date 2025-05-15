@@ -7,6 +7,7 @@ public record GetUsuarioRegistrado(
         Long id,
         String correo,
         String nombre,
+        String telefono,
         String rol
 ) implements Serializable {
 }

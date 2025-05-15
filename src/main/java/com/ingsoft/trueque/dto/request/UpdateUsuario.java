@@ -19,5 +19,7 @@ public class UpdateUsuario{
         private String nombre;
         @NotBlank
         private String apellido;
+        @NotBlank
+        private String telefono;
         private MultipartFile fotoPerfil; // Foto de perfil
 }

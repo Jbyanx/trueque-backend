@@ -15,6 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveArticulo{
+        private Long idPropietario;
         @NotBlank
         private String nombre;
         private String descripcion;

@@ -68,11 +68,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario saveUsuario(SaveUsuario usuario) {
+        System.out.println(usuario);
         validarClave(usuario);
 
         Usuario usuarioToSave = Usuario.builder()
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
+                .telefono(usuario.getTelefono())
                 .correo(usuario.getCorreo().toLowerCase())
                 .clave(passwordEncoder.encode(usuario.getClave()))
                 .rol(Rol.USUARIO)
@@ -108,6 +110,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         if(StringUtils.hasText(usuario.getApellido())){
             usuarioSaved.setApellido(usuario.getApellido());
+        }
+        if(StringUtils.hasText(usuario.getTelefono())){
+            usuarioSaved.setTelefono(usuario.getTelefono());
         }
     }
 

@@ -14,6 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
@@ -24,7 +26,18 @@ public class HttpSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(config -> config.disable()) //se usa es en statefull por eso lo deshabilitamos
+        return http
+                .cors(cors -> cors
+                        .configurationSource(request -> {
+                            var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                            corsConfig.setAllowedOrigins(List.of("http://localhost:5500", "http://127.0.0.1:5500"));
+                            corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
+                            corsConfig.setAllowedHeaders(List.of("*"));
+                            corsConfig.setAllowCredentials(true);
+                            return corsConfig;
+                        })
+                )
+                .csrf(config -> config.disable()) //se usa es en statefull por eso lo deshabilitamos
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthenticationProvider)
                 .authorizeHttpRequests(authorizeRequests ->{
