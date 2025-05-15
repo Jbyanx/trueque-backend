@@ -7,6 +7,7 @@ public record GetUsuario(
         Long id,
         String nombre,
         String apellido,
+        String telefono,
         String correo,
         List<ArticuloSimple> articulos
 ) implements Serializable {

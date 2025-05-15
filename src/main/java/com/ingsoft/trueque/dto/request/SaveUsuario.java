@@ -18,6 +18,8 @@ public class SaveUsuario{
         private String nombre;
         @NotBlank
         private String apellido;
+        @NotBlank
+        private String telefono;
         @Email
         private String correo;
         @NotBlank
