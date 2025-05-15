@@ -24,8 +24,8 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
-    public List<GetCategoria> getAllCategorias(Pageable pageable) {
-        return categoriaMapper.toGetCategoriaList(categoriaRepository.findAll(pageable).getContent());
+    public List<GetCategoria> getAllCategorias() {
+        return categoriaMapper.toGetCategoriaList(categoriaRepository.findAll());
     }
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
