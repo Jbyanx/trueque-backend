@@ -57,6 +57,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         return categoriaMapper.toGetCategoria(categoriaRepository.save(categoriaAtual));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     private void updateCategoria(Categoria categoriaAtual, SaveCategoria categoria) {
         if(StringUtils.hasText(categoria.getNombre())){
             categoriaAtual.setNombre(categoria.getNombre());
