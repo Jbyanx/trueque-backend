@@ -47,6 +47,7 @@ public class AuthService {
                 usuario.getId(),
                 usuario.getUsername(),
                 usuario.getNombre(),
+                usuario.getTelefono(),
                 usuario.getRol().name()
         );
     }
@@ -79,6 +80,7 @@ public class AuthService {
         extraClaims.put("nombre", persona.getNombre() + " " + persona.getApellido());
         extraClaims.put("rol", persona.getRol().name());
         extraClaims.put("sessionId", persona.getSessionId());
+        extraClaims.put("telefono", persona.getTelefono());
         return extraClaims;
     }
 
