@@ -22,7 +22,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private final CategoriaMapper categoriaMapper;
 
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
+    //@PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public List<GetCategoria> getAllCategorias() {
         return categoriaMapper.toGetCategoriaList(categoriaRepository.findAll());
