@@ -44,7 +44,7 @@ public class HttpSecurityConfig {
                     authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/registrar").permitAll();
                     authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/login").permitAll();
                     authorizeRequests.requestMatchers(HttpMethod.GET,"/uploads/**").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.GET,"/categorias/").permitAll();
+                    authorizeRequests.requestMatchers(HttpMethod.GET,"/categorias").permitAll();
                     authorizeRequests.requestMatchers(
                             "/v3/api-docs/**",
                             "/swagger-ui/**",
