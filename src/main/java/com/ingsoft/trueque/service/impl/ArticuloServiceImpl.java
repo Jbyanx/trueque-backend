@@ -163,7 +163,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         return articuloMapper.toGetArticulo(articuloRepository.save(articulo));
     }
 
-
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public Page<GetArticulo> obtenerMisArticulos(Pageable pageable) {
         Persona actual = obtenerPrincipal();
