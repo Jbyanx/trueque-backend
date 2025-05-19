@@ -8,7 +8,7 @@ public record GetArticulo(
         String descripcion,
         String urlImagen,
         String  estado,
-        String propietario,
-        String categoria
+        String idPropietario,
+        Long idCategoria
 ) implements Serializable {
 }
