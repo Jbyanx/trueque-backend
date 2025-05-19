@@ -11,8 +11,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ArticuloMapper {
     @Mapping(target = "urlImagen", source = "rutaImagen")
-    @Mapping(target = "categoria", source = "categoria.nombre")
-    @Mapping(target = "propietario", source = "propietario.nombre")
+    @Mapping(target = "idCategoria", source = "categoria.id")
+    @Mapping(target = "idPropietario", source = "propietario.id")
     GetArticulo toGetArticulo(Articulo articulo);
 
     @Mapping(target = "categoria.id", source = "idCategoria")
