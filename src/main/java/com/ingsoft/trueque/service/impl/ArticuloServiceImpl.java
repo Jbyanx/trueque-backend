@@ -124,6 +124,13 @@ public class ArticuloServiceImpl implements ArticuloService {
         if(StringUtils.hasText(articulo.getDescripcion())){
             articuloBd.setDescripcion(articulo.getDescripcion());
         }
+        if(articulo.getIdCategoria() != null) {
+            Categoria categoria = categoriaRepository.getCategoriaById(articulo.getIdCategoria())
+                    .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria " + articulo.getIdCategoria() + ", no encontrada en BD"));
+
+            articuloBd.setCategoria(categoria);
+        }
+
         try {
             if (file != null && !file.isEmpty()) {
                 String rutaImagen = fileStorageService.guardarImagen(file);
@@ -134,7 +141,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         }
     }
 
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('USUARIO')")
     @Override
     public void deleteArticuloById(Long id) {
         if(articuloRepository.existsById(id)){
