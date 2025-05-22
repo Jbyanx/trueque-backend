@@ -46,19 +46,24 @@ public class ArticuloServiceImpl implements ArticuloService {
         this.fileStorageService = fileStorageService;
     }
 
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public Page<GetArticulo> getAllArticulosDisponibles(ArticuloFiltroRequest filtroRequest,
                                                         Pageable pageable) {
 
+        Persona principal = obtenerPrincipal();
+        Long idPrincipal = (principal != null) ? principal.getId() : null;
+
         Specification<Articulo> spec = Specification
-                .where(ArticuloSpecification.conCategoria(filtroRequest.categoria()))
-                .and(ArticuloSpecification.conEstado(filtroRequest.estado()))
+                .where(ArticuloSpecification.conCategoria(filtroRequest.idCategoria()))
+                .and(ArticuloSpecification.conEstado(EstadoArticulo.DISPONIBLE))
                 .and(ArticuloSpecification.conNombre(filtroRequest.nombre()));
 
-        Long idPrincipal = obtenerPrincipal().getId();
+        // Solo excluye si usuario autenticado y filtro pide excluir
+        if (idPrincipal != null && Boolean.TRUE.equals(filtroRequest.excluirPrincipal())) {
+            spec = spec.and(ArticuloSpecification.sinPropietario(true, idPrincipal));
+        }
 
-        return articuloRepository.findAllByEstado(spec, pageable, EstadoArticulo.DISPONIBLE, idPrincipal).map(articuloMapper::toGetArticulo);
+        return articuloRepository.findAllByEstado(spec, pageable).map(articuloMapper::toGetArticulo);
     }
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
@@ -198,7 +203,12 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
 
-    private Persona obtenerPrincipal() {
-        return (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public Persona obtenerPrincipal() {
+        try {
+            return (Persona) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            // No hay usuario autenticado o no se puede obtener el principal
+            return null;
+        }
     }
 }
