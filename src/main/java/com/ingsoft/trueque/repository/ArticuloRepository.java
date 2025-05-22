@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -26,27 +25,23 @@ public interface ArticuloRepository extends JpaRepository<Articulo, Long>, JpaSp
     Page<Articulo> getArticulosByEstado(EstadoArticulo estadoArticulo, Pageable pageable);
 
     @Query("""
-        SELECT a
-        FROM Intercambio i JOIN i.articuloUno a
+    SELECT a
+        FROM Intercambio i  JOIN i.articuloUno a
         WHERE i.estado = 'REALIZADO'
         AND (i.usuarioUno.id = :usuarioId OR i.usuarioDos.id = :usuarioId)
-        UNION
-        SELECT a2 FROM Intercambio i2
+    UNION
+        SELECT a2   FROM Intercambio i2
         JOIN i2.articuloDos a2
-        WHERE i2.estado = 'REALIZADO'
-        AND (i2.usuarioUno.id = :usuarioId OR i2.usuarioDos.id = :usuarioId)
+            WHERE i2.estado = 'REALIZADO'
+    AND (i2.usuarioUno.id = :usuarioId OR i2.usuarioDos.id = :usuarioId)
     """)
-    Page<Articulo> findArticulosIntercambiadosPorUsuario(@Param("usuarioId") Long usuarioId, Pageable pageable);
+    Page<Articulo> findArticulosIntercambiadosPorUsuario(Long usuarioId, Pageable pageable);
 
-    Page<Articulo> getArticulosByPropietarioIdAndEstado(Long idUsuario, EstadoArticulo estadoArticulo, Pageable pageable);
+    Page<Articulo> getArticulosByPropietarioIdAndEstado(Long idUsuario, Pageable pageable, EstadoArticulo estadoArticulo);
 
-    @Query("SELECT a FROM Articulo a WHERE a.estado = :estado AND a.propietario.id <> :idPropietario")
-    Page<Articulo> findAllByEstado(
-            @Param("estado") EstadoArticulo estado,
-            @Param("idPropietario") Long idPropietario,
-            Pageable pageable
-    );
+    @Query("select a from Articulo a where a.estado = 'DISPONIBLE' and a.propietario.id != ?3")
+    Page<Articulo> findAllByEstado(Specification<Articulo> spec, Pageable pageable, EstadoArticulo estadoArticulo, Long idPrincipal);
 
-    @Query("SELECT a FROM Articulo a WHERE a.propietario.id = :id AND a.estado = 'DISPONIBLE'")
-    Page<Articulo> getArticulosDisponiblesByUsuarioId(@Param("id") Long id, Pageable pageable);
+    @Query("select a from Articulo a where a.propietario.id = ?1 and a.estado = 'DISPONIBLE'")
+    Page<Articulo> getArticulosDisponiblesByUsuarioId(Long id, Pageable pageable);
 }

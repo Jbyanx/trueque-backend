@@ -46,13 +46,19 @@ public class ArticuloServiceImpl implements ArticuloService {
         this.fileStorageService = fileStorageService;
     }
 
-
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
-    public Page<GetArticulo> getAllArticulosDisponibles(Pageable pageable) {
+    public Page<GetArticulo> getAllArticulosDisponibles(ArticuloFiltroRequest filtroRequest,
+                                                        Pageable pageable) {
+
+        Specification<Articulo> spec = Specification
+                .where(ArticuloSpecification.conCategoria(filtroRequest.categoria()))
+                .and(ArticuloSpecification.conEstado(filtroRequest.estado()))
+                .and(ArticuloSpecification.conNombre(filtroRequest.nombre()));
 
         Long idPrincipal = obtenerPrincipal().getId();
 
-        return articuloRepository.findAllByEstado(EstadoArticulo.DISPONIBLE, idPrincipal,pageable).map(articuloMapper::toGetArticulo);
+        return articuloRepository.findAllByEstado(spec, pageable, EstadoArticulo.DISPONIBLE, idPrincipal).map(articuloMapper::toGetArticulo);
     }
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
@@ -120,13 +126,6 @@ public class ArticuloServiceImpl implements ArticuloService {
         if(StringUtils.hasText(articulo.getDescripcion())){
             articuloBd.setDescripcion(articulo.getDescripcion());
         }
-        if(articulo.getIdCategoria() != null) {
-            Categoria categoria = categoriaRepository.getCategoriaById(articulo.getIdCategoria())
-                    .orElseThrow(() -> new CategoriaNotFoundException("Error al guardar articulo con id categoria " + articulo.getIdCategoria() + ", no encontrada en BD"));
-
-            articuloBd.setCategoria(categoria);
-        }
-
         try {
             if (file != null && !file.isEmpty()) {
                 String rutaImagen = fileStorageService.guardarImagen(file);
@@ -137,7 +136,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         }
     }
 
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('USUARIO')")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void deleteArticuloById(Long id) {
         if(articuloRepository.existsById(id)){

@@ -1,11 +1,11 @@
 package com.ingsoft.trueque.dto.request;
 
-import org.springframework.data.domain.Pageable;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
 
 public record ArticuloFiltroRequest(
-        String categoria,
+        Long idCategoria,
         String nombre,
-        String estado,
-        Pageable pageable
+        EstadoArticulo estado,
+        Boolean excluirPrincipal
 ) {
 }
