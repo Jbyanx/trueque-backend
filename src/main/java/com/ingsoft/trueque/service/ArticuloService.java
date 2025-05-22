@@ -18,4 +18,6 @@ public interface ArticuloService {
     Page<GetArticulo> obtenerMisArticulos(Pageable pageable);
 
     Page<GetArticulo> getAllArticulosDisponiblesByUsuarioId(Pageable pageable, Long id);
+
+    Page<GetArticulo> getArticulosByIdCategoria(Long idCategoria, Pageable pageable);
 }

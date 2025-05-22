@@ -56,7 +56,9 @@ public class ArticuloServiceImpl implements ArticuloService {
                 .and(ArticuloSpecification.conEstado(filtroRequest.estado()))
                 .and(ArticuloSpecification.conNombre(filtroRequest.nombre()));
 
-        return articuloRepository.findAllByEstado(spec, pageable, EstadoArticulo.DISPONIBLE).map(articuloMapper::toGetArticulo);
+        Long idPrincipal = obtenerPrincipal().getId();
+
+        return articuloRepository.findAllByEstado(spec, pageable, EstadoArticulo.DISPONIBLE, idPrincipal).map(articuloMapper::toGetArticulo);
     }
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
@@ -183,6 +185,15 @@ public class ArticuloServiceImpl implements ArticuloService {
                         .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado en BD"));
 
         return articuloRepository.getArticulosDisponiblesByUsuarioId(id, pageable)
+                .map(a -> articuloMapper.toGetArticulo(a));
+    }
+
+    @Override
+    public Page<GetArticulo> getArticulosByIdCategoria(Long idCategoria, Pageable pageable) {
+        if(!categoriaRepository.existsById(idCategoria)){
+            throw new CategoriaNotFoundException("Categoria no encontrada en B");
+        }
+        return articuloRepository.getArticulosByCategoriaId(idCategoria, pageable)
                 .map(a -> articuloMapper.toGetArticulo(a));
     }
 
