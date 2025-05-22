@@ -58,8 +58,8 @@ public class ArticuloServiceImpl implements ArticuloService {
                 .and(ArticuloSpecification.conEstado(EstadoArticulo.DISPONIBLE))
                 .and(ArticuloSpecification.conNombre(filtroRequest.nombre()));
 
-        // Solo excluye si usuario autenticado y filtro pide excluir
-        if (idPrincipal != null && Boolean.TRUE.equals(filtroRequest.excluirPrincipal())) {
+        // Solo excluye si usuario autenticado
+        if (idPrincipal != null) {
             spec = spec.and(ArticuloSpecification.sinPropietario(true, idPrincipal));
         }
 
