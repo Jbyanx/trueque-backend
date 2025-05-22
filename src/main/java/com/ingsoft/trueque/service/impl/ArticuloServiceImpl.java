@@ -46,19 +46,13 @@ public class ArticuloServiceImpl implements ArticuloService {
         this.fileStorageService = fileStorageService;
     }
 
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
-    @Override
-    public Page<GetArticulo> getAllArticulosDisponibles(ArticuloFiltroRequest filtroRequest,
-                                                        Pageable pageable) {
 
-        Specification<Articulo> spec = Specification
-                .where(ArticuloSpecification.conCategoria(filtroRequest.categoria()))
-                .and(ArticuloSpecification.conEstado(filtroRequest.estado()))
-                .and(ArticuloSpecification.conNombre(filtroRequest.nombre()));
+    @Override
+    public Page<GetArticulo> getAllArticulosDisponibles(Pageable pageable) {
 
         Long idPrincipal = obtenerPrincipal().getId();
 
-        return articuloRepository.findAllByEstado(spec, pageable, EstadoArticulo.DISPONIBLE, idPrincipal).map(articuloMapper::toGetArticulo);
+        return articuloRepository.findAllByEstado(EstadoArticulo.DISPONIBLE, idPrincipal,pageable).map(articuloMapper::toGetArticulo);
     }
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")

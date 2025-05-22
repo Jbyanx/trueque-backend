@@ -8,8 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ArticuloService {
-    Page<GetArticulo> getAllArticulosDisponibles(ArticuloFiltroRequest filtros,
-                                                 Pageable pageable);
+    Page<GetArticulo> getAllArticulosDisponibles(Pageable pageable);
     GetArticulo getArticuloById(Long id);
     GetArticulo saveArticulo(SaveArticulo articulo, MultipartFile imagen);
     GetArticulo updateArticuloById(Long id, SaveArticulo articulo, MultipartFile imagen);

@@ -132,7 +132,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         } if(estadoArticulo.equals(EstadoArticulo.INTERCAMBIADO)){
             return articuloRepository.findArticulosIntercambiadosPorUsuario(idUsuario, pageable).map(articuloMapper::toGetArticulo);
         }
-        return articuloRepository.getArticulosByPropietarioIdAndEstado(idUsuario, pageable, estadoArticulo).map(articuloMapper::toGetArticulo);
+        return articuloRepository.getArticulosByPropietarioIdAndEstado(idUsuario,estadoArticulo, pageable).map(articuloMapper::toGetArticulo);
     }
 
     @Override
