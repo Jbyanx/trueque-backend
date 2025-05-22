@@ -18,6 +18,8 @@ public interface ArticuloRepository extends JpaRepository<Articulo, Long>, JpaSp
 
     Optional<Articulo> findByPropietarioNombre(String nombre);
 
+    Page<Articulo> getArticulosByCategoriaId(Long idCategoria, Pageable pageable);
+
     Page<Articulo> getArticulosByPropietarioId(Long idUsuario, Pageable pageable);
 
     Page<Articulo> getArticulosByEstado(EstadoArticulo estadoArticulo, Pageable pageable);
@@ -37,8 +39,8 @@ public interface ArticuloRepository extends JpaRepository<Articulo, Long>, JpaSp
 
     Page<Articulo> getArticulosByPropietarioIdAndEstado(Long idUsuario, Pageable pageable, EstadoArticulo estadoArticulo);
 
-    @Query("select a from Articulo a where a.estado = 'DISPONIBLE'")
-    Page<Articulo> findAllByEstado(Specification<Articulo> spec, Pageable pageable, EstadoArticulo estadoArticulo);
+    @Query("select a from Articulo a where a.estado = 'DISPONIBLE' and a.propietario.id != ?3")
+    Page<Articulo> findAllByEstado(Specification<Articulo> spec, Pageable pageable, EstadoArticulo estadoArticulo, Long idPrincipal);
 
     @Query("select a from Articulo a where a.propietario.id = ?1 and a.estado = 'DISPONIBLE'")
     Page<Articulo> getArticulosDisponiblesByUsuarioId(Long id, Pageable pageable);
