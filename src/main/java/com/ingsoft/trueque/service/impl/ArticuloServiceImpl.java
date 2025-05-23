@@ -66,7 +66,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         return articuloRepository.findAll(spec, pageable).map(articuloMapper::toGetArticulo);
     }
 
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
+
     @Override
     public GetArticulo getArticuloById(Long id) {
         return articuloRepository.findById(id)
