@@ -23,7 +23,7 @@ public class Reporte {
     @NotBlank
     private String descripcion;
 
-    @OneToOne(targetEntity = Usuario.class, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
