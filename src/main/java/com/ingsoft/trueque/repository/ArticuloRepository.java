@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface ArticuloRepository extends JpaRepository<Articulo, Long>, JpaSpecificationExecutor<Articulo> {
 
-    Page<Articulo> findAllByEstado(Specification<Articulo> spec, Pageable pageable);
+    Page<Articulo> findAll(Specification<Articulo> spec, Pageable pageable);
 
     Optional<Articulo> findByPropietarioNombre(String nombre);
 

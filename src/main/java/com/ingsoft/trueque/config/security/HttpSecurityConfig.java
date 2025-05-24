@@ -11,10 +11,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
@@ -22,44 +26,35 @@ import java.util.List;
 public class HttpSecurityConfig {
     private final AuthenticationProvider daoAuthenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(cors -> cors
-                        .configurationSource(request -> {
-                            var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                            corsConfig.setAllowedOrigins(List.of("http://localhost:5500", "http://127.0.0.1:5500"));
-                            corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
-                            corsConfig.setAllowedHeaders(List.of("*"));
-                            corsConfig.setAllowCredentials(true);
-                            return corsConfig;
-                        })
-                )
-                .csrf(config -> config.disable()) //se usa es en statefull por eso lo deshabilitamos
+                .cors(withDefaults()) // Usa el @Bean de abajo
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthenticationProvider)
-                .authorizeHttpRequests(authorizeRequests ->{
-                    authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/registrar").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/login").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.GET,"/uploads/**").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.GET,"/categorias").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.GET,"/articulos").permitAll();
-                    authorizeRequests.requestMatchers(
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/swagger-resources/**",
-                            "/webjars/**",
-                            "/configuration/**"
-                    ).permitAll();
-
-                    authorizeRequests.requestMatchers("/error").permitAll();
-                    authorizeRequests.anyRequest().authenticated();
+                .authorizeHttpRequests(authorize -> {
+                    authorize
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/auth/registrar", "/auth/login").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/uploads/**", "/categorias", "/articulos", "/articulos/**", "/usuarios/**").permitAll()
+                            .anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new CorsFilter(corsConfigurationSource), JwtAuthenticationFilter.class) // Agregamos el CorsFilter
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5500", "http://127.0.0.1:5500", "http://localhost:8080","http://localhost"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

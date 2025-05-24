@@ -63,10 +63,10 @@ public class ArticuloServiceImpl implements ArticuloService {
             spec = spec.and(ArticuloSpecification.sinPropietario(true, idPrincipal));
         }
 
-        return articuloRepository.findAllByEstado(spec, pageable).map(articuloMapper::toGetArticulo);
+        return articuloRepository.findAll(spec, pageable).map(articuloMapper::toGetArticulo);
     }
 
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
+
     @Override
     public GetArticulo getArticuloById(Long id) {
         return articuloRepository.findById(id)
@@ -141,7 +141,7 @@ public class ArticuloServiceImpl implements ArticuloService {
         }
     }
 
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public void deleteArticuloById(Long id) {
         if(articuloRepository.existsById(id)){
