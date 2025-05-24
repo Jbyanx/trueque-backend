@@ -156,8 +156,14 @@ public class ArticuloServiceImpl implements ArticuloService {
             throw new AccesoNoPermitidoException("No tienes permisos para eliminar este artículo");
         }
 
+        // Eliminar imagen si existe
+        if (articulo.getRutaImagen() != null) {
+            fileStorageService.eliminarImagen(articulo.getRutaImagen());
+        }
+
         articuloRepository.deleteById(id);
     }
+
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
