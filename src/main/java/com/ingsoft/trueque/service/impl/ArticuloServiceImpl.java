@@ -144,12 +144,26 @@ public class ArticuloServiceImpl implements ArticuloService {
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
     public void deleteArticuloById(Long id) {
-        if(articuloRepository.existsById(id)){
-            articuloRepository.deleteById(id);
-        }else{
-            throw new ArticuloNotFoundException("El articulo no se puede eliminar porque no existe en BD ID:"+id);
+        Articulo articulo = articuloRepository.findById(id)
+                .orElseThrow(() -> new ArticuloNotFoundException("Error al eliminar el artículo con id " + id + ", no encontrado en BD"));
+
+        Persona actual = obtenerPrincipal();
+
+        boolean esPropietario = actual.getId().equals(articulo.getPropietario().getId());
+        boolean esAdmin = actual.getRol().equals(Rol.ADMINISTRADOR);
+
+        if (!esPropietario && !esAdmin) {
+            throw new AccesoNoPermitidoException("No tienes permisos para eliminar este artículo");
         }
+
+        // Eliminar imagen si existe
+        if (articulo.getRutaImagen() != null) {
+            fileStorageService.eliminarImagen(articulo.getRutaImagen());
+        }
+
+        articuloRepository.deleteById(id);
     }
+
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
     @Override
