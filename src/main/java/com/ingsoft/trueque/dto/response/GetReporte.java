@@ -7,8 +7,8 @@ public record GetReporte(
         Long id,
         String descripcion,
         String estado,
-        String autor,
-        String articulo,
+        Long idAutor,
+        Long idArticulo,
         LocalDateTime fecha
 ) implements Serializable {
 }

@@ -12,13 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ReporteMapper {
 
-    @Mapping(target = "autor", source = "usuario.nombre")
-    @Mapping(target = "articulo", source = "articulo.nombre")
     @Mapping(target = "fecha", source = "fechaReporte")
+    @Mapping(target = "idArticulo", source = "articulo.id")
+    @Mapping(target = "idAutor", source = "usuario.id")
     GetReporte toGetReporte(Reporte reporte);
 
-
-    @Mapping(target = "usuario.id", source = "idAutor")
     Reporte toReporte(SaveReporte saveReporte);
 
     List<GetReporte> toGetReporteList(List<Reporte> reportes);
