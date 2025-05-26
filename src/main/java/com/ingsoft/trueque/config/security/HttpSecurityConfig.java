@@ -39,6 +39,11 @@ public class HttpSecurityConfig {
                             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/auth/registrar", "/auth/login").permitAll()
                             .requestMatchers(HttpMethod.GET, "/uploads/**", "/categorias", "/articulos", "/articulos/**", "/usuarios/**").permitAll()
+                            .requestMatchers(
+                                    "/v3/api-docs/**",
+                                    "/swagger-ui/**",
+                                    "/swagger-ui.html"
+                            ).permitAll()
                             .anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
