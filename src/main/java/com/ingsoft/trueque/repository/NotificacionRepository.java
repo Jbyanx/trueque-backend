@@ -16,4 +16,7 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
     List<Notificacion> findAllByReceptorId(Long receptorId);
 
     void deleteNotificacionById(Long id);
+
+    List<Notificacion> findAllByReceptorIdAndLeidaFalse(Long id);
+
 }
