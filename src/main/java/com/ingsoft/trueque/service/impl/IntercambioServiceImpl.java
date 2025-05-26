@@ -1,13 +1,12 @@
 package com.ingsoft.trueque.service.impl;
 
 import com.ingsoft.trueque.dto.request.SaveIntercambio;
+import com.ingsoft.trueque.dto.request.SaveNotificacion;
 import com.ingsoft.trueque.dto.response.GetIntercambio;
 import com.ingsoft.trueque.exception.*;
 import com.ingsoft.trueque.mapper.IntercambioMapper;
-import com.ingsoft.trueque.model.Articulo;
-import com.ingsoft.trueque.model.Intercambio;
-import com.ingsoft.trueque.model.Persona;
-import com.ingsoft.trueque.model.Usuario;
+import com.ingsoft.trueque.mapper.NotificacionMapper;
+import com.ingsoft.trueque.model.*;
 import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.model.util.EstadoIntercambio;
 import com.ingsoft.trueque.model.util.Rol;
@@ -15,7 +14,7 @@ import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.IntercambioRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.IntercambioService;
-import com.ingsoft.trueque.service.NotificationService;
+import com.ingsoft.trueque.service.NotificacionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,7 +34,8 @@ public class IntercambioServiceImpl implements IntercambioService {
     private final IntercambioMapper intercambioMapper;
     private final UsuarioRepository usuarioRepository;
     private final ArticuloRepository articuloRepository;
-    private final NotificationService notificationService;
+    private final NotificacionService notificacionService;
+    private final NotificacionMapper notificacionMapper;
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
@@ -91,26 +91,26 @@ public class IntercambioServiceImpl implements IntercambioService {
             intercambioToSave.setIntercambioPadre(padre);
             intercambioToSave.setEstado(EstadoIntercambio.EN_NEGOCIACION);
 
-            //Notificación WebSocket
-            String  notificacion = "¡Tienes una negociacion de intercambio!"+
-                    propietario.getNombre() + " te ha propuesto negociar con otro articulo.";
 
-            notificationService.notificar(usuarioDos.getCorreo(), notificacion);
+            SaveNotificacion notificacion = new SaveNotificacion(
+                    "¡Tienes una negociacion de intercambio!"+
+                            propietario.getNombre() + " te ha propuesto negociar con otro articulo."
+                    , intercambioToSave.getUsuarioDos().getId()
+            );
+
+            notificacionService.createNotificacion(notificacion);
         } else{
 
-            //Notificación WebSocket
-            String  notificacion = "¡Tienes una nueva solicitud!"+
-                    propietario.getNombre() + " te ha propuesto un intercambio.";
+            SaveNotificacion notificacion = new SaveNotificacion(
+                    "¡Tienes una nueva solicitud!"+
+                            propietario.getNombre() + " te ha propuesto un intercambio."                    , intercambioToSave.getUsuarioDos().getId()
+            );
 
-            notificationService.notificar(usuarioDos.getCorreo(), notificacion);
-
+            notificacionService.createNotificacion(notificacion);
         }
-
-
 
         return intercambioMapper.toGetIntercambio(intercambioRepository.save(intercambioToSave));
     }
-
 
     @PreAuthorize("hasRole('USUARIO')")
     @Transactional
@@ -128,25 +128,25 @@ public class IntercambioServiceImpl implements IntercambioService {
 
         updateEstadoIntercambio(intercambio, EstadoIntercambio.ACEPTADO);
 
-        //Notificación WebSocket
-        String  notificacion = "¡Han aceptado tu solicitud de intercambio!"+
-                actual.getNombre() + " ha aceptado tu solicitud de intercambio.";
+        // Crear notificación asincrónica para el usuario que propuso el intercambio
+        SaveNotificacion notificacion = new SaveNotificacion(
+                "¡Han aceptado tu solicitud de intercambio! " +
+                        actual.getNombre() + " ha aceptado tu propuesta.",
+                intercambio.getUsuarioUno().getId()
+        );
 
-        notificationService.notificar(intercambio.getUsuarioDos().getCorreo(), notificacion);
+        notificacionService.createNotificacion(notificacion);
 
         return intercambioMapper.toGetIntercambio(intercambio);
     }
 
+
     private void updateEstadoIntercambio(Intercambio intercambioToUpdate, EstadoIntercambio estadoIntercambio) {
-        if(estadoIntercambio == null){
-            throw new IllegalArgumentException("el estado no puede ser null");
+        if (estadoIntercambio == null) {
+            throw new IllegalArgumentException("El estado no puede ser null");
         }
-            intercambioToUpdate.setEstado(estadoIntercambio);
 
-        //Notificación WebSocket
-        String  notificacion = "¡Se ha actualizado tu solicitud de intercambio!";
-
-        notificationService.notificar(intercambioToUpdate.getUsuarioUno().getCorreo(), notificacion);
+        intercambioToUpdate.setEstado(estadoIntercambio);
     }
 
     @PreAuthorize("hasRole('USUARIO')")
@@ -154,8 +154,8 @@ public class IntercambioServiceImpl implements IntercambioService {
     @Override
     public GetIntercambio rechazarIntercambio(Long intercambioId) {
         Intercambio intercambio = intercambioRepository.findById(intercambioId)
-                .orElseThrow(() -> new IntercambioNotFoundException("Error al rechazar el intercambio," +
-                        "con id "+intercambioId+" no existe en BD."));
+                .orElseThrow(() -> new IntercambioNotFoundException("Error al rechazar el intercambio, " +
+                        "el id " + intercambioId + " no existe en BD."));
 
         Usuario actual = (Usuario) obtenerPrincipal();
 
@@ -165,11 +165,14 @@ public class IntercambioServiceImpl implements IntercambioService {
 
         updateEstadoIntercambio(intercambio, EstadoIntercambio.RECHAZADO);
 
-        //Notificación WebSocket
-        String  notificacion = "¡Han rechazado tu solicitud de intercambio!"+
-                actual.getNombre() + " ha rechazado tu solicitud de intercambio.";
+        // Crear notificación asincrónica para el usuario que propuso el intercambio
+        SaveNotificacion notificacion = new SaveNotificacion(
+                "¡Han rechazado tu solicitud de intercambio! " +
+                        actual.getNombre() + " ha rechazado tu propuesta.",
+                intercambio.getUsuarioUno().getId()
+        );
 
-        notificationService.notificar(intercambio.getUsuarioDos().getCorreo(), notificacion);
+        notificacionService.createNotificacion(notificacion);
 
         return intercambioMapper.toGetIntercambio(intercambio);
     }
@@ -182,15 +185,19 @@ public class IntercambioServiceImpl implements IntercambioService {
                 .orElseThrow(() -> new IntercambioNotFoundException("Error al cancelar el intercambio," +
                         "con id "+intercambioId+" no existe en BD."));
 
-        Usuario actual = (Usuario)  obtenerPrincipal();
+        Usuario actual = (Usuario) obtenerPrincipal();
 
-        if(!(intercambio.getUsuarioUno().getId().equals(actual.getId()) || intercambio.getUsuarioDos().getId().equals(actual.getId()))){
+        if (!(intercambio.getUsuarioUno().getId().equals(actual.getId()) || intercambio.getUsuarioDos().getId().equals(actual.getId()))) {
             throw new LogicaNegocioException("Solo puede cancelar el intercambio un usuario que participe en dicho intercambio");
         }
+
         updateEstadoIntercambio(intercambio, EstadoIntercambio.CANCELADO);
+
+        notificarCancelacion(intercambio, actual);
 
         return intercambioMapper.toGetIntercambio(intercambio);
     }
+
 
     private void notificarCancelacion(Intercambio intercambio, Usuario quienCancelo) {
         Usuario usuarioUno = intercambio.getArticuloUno().getPropietario();
@@ -198,10 +205,13 @@ public class IntercambioServiceImpl implements IntercambioService {
 
         Usuario destinatario = usuarioUno.equals(quienCancelo) ? usuarioDos : usuarioUno;
 
-        //Notificación WebSocket
-        String  notificacion = "¡Han cancelado tu solicitud de intercambio!";
+        SaveNotificacion notificacion = new SaveNotificacion(
+                "¡Han cancelado tu solicitud de intercambio! " +
+                        quienCancelo.getNombre() + " ha cancelado el intercambio.",
+                destinatario.getId()
+        );
 
-        notificationService.notificar(destinatario.getCorreo(), notificacion);
+        notificacionService.createNotificacion(notificacion);
     }
 
     @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
@@ -229,7 +239,6 @@ public class IntercambioServiceImpl implements IntercambioService {
 
         return intercambioMapper.toGetIntercambio(intercambioRepository.save(intercambio));
     }
-
 
     @PreAuthorize("hasRole('USUARIO')")
     @Override

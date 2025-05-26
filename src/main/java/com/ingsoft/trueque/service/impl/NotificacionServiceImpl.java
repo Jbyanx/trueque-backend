@@ -15,6 +15,7 @@ import com.ingsoft.trueque.repository.NotificacionRepository;
 import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.NotificacionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class NotificacionServiceImpl implements NotificacionService {
+    private final SimpMessagingTemplate messagingTemplate;
     private final UsuarioRepository usuarioRepository;
     private final NotificacionRepository notificacionRepository;
     private final NotificacionMapper notificacionMapper;
@@ -36,10 +38,17 @@ public class NotificacionServiceImpl implements NotificacionService {
                         .orElseThrow(() -> new UsuarioNotFoundException("El receptor de la notificacion no existe en DB"));
 
         Notificacion notificacion = notificacionMapper.toNotificacion(saveNotificacion);
-
         notificacion.setReceptor(receptor);
+        Notificacion guardada = notificacionRepository.save(notificacion);
+        GetNotificacion dto = notificacionMapper.toGetNotificacion(guardada);
 
-        return notificacionMapper.toGetNotificacion(notificacionRepository.save(notificacion));
+        // Notificar en tiempo real por WebSocket
+        messagingTemplate.convertAndSendToUser(
+                receptor.getUsername(),
+                "/queue/notificaciones",
+                dto
+        );
+        return dto;
     }
 
     //esta funcion si la ejecutan los ADMIN y los propietarios
