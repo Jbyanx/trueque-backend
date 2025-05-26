@@ -17,6 +17,7 @@ import com.ingsoft.trueque.repository.UsuarioRepository;
 import com.ingsoft.trueque.service.ArticuloService;
 import com.ingsoft.trueque.specification.ArticuloSpecification;
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 public class ArticuloServiceImpl implements ArticuloService {
     private final ArticuloRepository articuloRepository;
@@ -214,6 +216,25 @@ public class ArticuloServiceImpl implements ArticuloService {
         }
         return articuloRepository.getArticulosByCategoriaId(idCategoria, pageable)
                 .map(a -> articuloMapper.toGetArticulo(a));
+    }
+
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
+    @Override
+    public GetArticulo cambiarEstadoArticulo(Long id, EstadoArticulo estado) {
+        Articulo articulo = articuloRepository.findById(id)
+                .orElseThrow(() -> new ArticuloNotFoundException("Error al cambiar el estado del articulo, no existe en BD"));
+
+        Usuario actual = (Usuario) obtenerPrincipal();
+
+        if(!actual.getRol().equals(Rol.ADMINISTRADOR) && actual.getId().equals(articulo.getPropietario().getId())){
+            throw new AccesoNoPermitidoException("no tienes acceso a cambiar el estado de este articulo, solo si eres el propietario o eres ADMINISTRADOR");
+        }
+
+        articulo.setEstado(estado);
+
+        log.info("estado del articulo actualizado exitosamente");
+
+        return articuloMapper.toGetArticulo(articuloRepository.save(articulo));
     }
 
 
