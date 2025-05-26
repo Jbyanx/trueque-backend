@@ -3,6 +3,7 @@ package com.ingsoft.trueque.service;
 import com.ingsoft.trueque.dto.request.ArticuloFiltroRequest;
 import com.ingsoft.trueque.dto.request.SaveArticulo;
 import com.ingsoft.trueque.dto.response.GetArticulo;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,4 +21,6 @@ public interface ArticuloService {
     Page<GetArticulo> getAllArticulosDisponiblesByUsuarioId(Pageable pageable, Long id);
 
     Page<GetArticulo> getArticulosByIdCategoria(Long idCategoria, Pageable pageable);
+
+    GetArticulo cambiarEstadoArticulo(Long id, EstadoArticulo estado);
 }
