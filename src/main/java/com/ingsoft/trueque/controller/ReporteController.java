@@ -33,6 +33,11 @@ public class ReporteController {
         return ResponseEntity.ok(reporteService.getAllReportes(pageable));
     }
 
+    @GetMapping("/activos")
+    public ResponseEntity<Page<GetReporte>> getAllReportesActivos(@ParameterObject Pageable pageable){
+        return ResponseEntity.ok(reporteService.getAllReportesActivos(pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<GetReporte> getReporteById(@Parameter @PathVariable Long id){
         return ResponseEntity.ok(reporteService.getReporteById(id));
@@ -60,14 +65,20 @@ public class ReporteController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/descartar")
+    public ResponseEntity<GetReporte> descartarReporte(@Parameter @PathVariable Long id){
+        GetReporte reporte = reporteService.descartarReporte(id);
+        return ResponseEntity.ok(reporte);
+    }
+
     @GetMapping("/reporte-de-actividad")
     public ResponseEntity<PlataformaReporteResumen> getReporteDeActividad(){
         return ResponseEntity.ok(reporteService.getResumenActividad());
     }
 
-    @PutMapping("/{idReporte}/eliminar-articulo")
-    public ResponseEntity<String> putString(@Parameter @PathVariable Long idReporte ) {
-        return ResponseEntity.ok(reporteService.eliminarArticuloReportado(idReporte));
+    @PutMapping("/{idReporte}/desactivar-articulo")
+    public ResponseEntity<String> desactivarArticulo(@Parameter @PathVariable Long idReporte ) {
+        return ResponseEntity.ok(reporteService.desactivarArticuloReportado(idReporte));
     }
 
 }
