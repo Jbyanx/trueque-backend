@@ -6,8 +6,6 @@ import com.ingsoft.trueque.dto.response.PlataformaReporteResumen;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface ReporteService {
     Page<GetReporte> getAllReportes(Pageable pageable);
     GetReporte getReporteById(Long id);
@@ -15,6 +13,10 @@ public interface ReporteService {
     GetReporte updateReporteById(Long id, SaveReporte reporte);
     void deleteReporteById(Long id);
 
-    String  eliminarArticuloReportado(Long idReporte);
+    String desactivarArticuloReportado(Long idReporte);
     PlataformaReporteResumen getResumenActividad();
+
+    GetReporte descartarReporte(Long id);
+
+    Page<GetReporte> getAllReportesActivos(Pageable pageable);
 }
