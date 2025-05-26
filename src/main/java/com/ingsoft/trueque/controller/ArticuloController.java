@@ -3,6 +3,7 @@ package com.ingsoft.trueque.controller;
 import com.ingsoft.trueque.dto.request.ArticuloFiltroRequest;
 import com.ingsoft.trueque.dto.request.SaveArticulo;
 import com.ingsoft.trueque.dto.response.GetArticulo;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.service.ArticuloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -138,5 +139,11 @@ public class ArticuloController {
     public ResponseEntity<Void> eliminarArticuloFisico(@Parameter @PathVariable Long id){
         articuloService.deleteArticuloById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/cambiar-estado")
+    public ResponseEntity<GetArticulo> cambiarEstadoArticulo(@PathVariable @Parameter Long id, @ModelAttribute @Parameter EstadoArticulo estado){
+        GetArticulo articulo = articuloService.cambiarEstadoArticulo(id, estado);
+        return ResponseEntity.ok(articulo);
     }
 }
