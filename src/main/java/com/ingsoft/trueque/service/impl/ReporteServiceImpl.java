@@ -9,6 +9,7 @@ import com.ingsoft.trueque.mapper.ReporteMapper;
 import com.ingsoft.trueque.model.Articulo;
 import com.ingsoft.trueque.model.Reporte;
 import com.ingsoft.trueque.model.Usuario;
+import com.ingsoft.trueque.model.util.EstadoArticulo;
 import com.ingsoft.trueque.model.util.EstadoReporte;
 import com.ingsoft.trueque.repository.ArticuloRepository;
 import com.ingsoft.trueque.repository.IntercambioRepository;
@@ -91,18 +92,19 @@ public class ReporteServiceImpl implements ReporteService {
     }
 
     @Override
-    public String  eliminarArticuloReportado(Long idReporte) {
+    public String desactivarArticuloReportado(Long idReporte) {
         Reporte reporte = reporteRepository.findById(idReporte)
                 .orElseThrow(() -> new ReporteNotFoundException("Error al eliminar el articulo reportado, Reporte no encontrado"));
 
         Articulo articulo = reporte.getArticulo();
 
         if (articulo != null) {
-            articuloRepository.delete(articulo);
+            //desactivamos el articulo que se reportṕ
+            articulo.setEstado(EstadoArticulo.DESACTIVADO);
             // Marcar reporte como resuelto
             reporte.setEstado(EstadoReporte.RESUELTO);
             reporteRepository.save(reporte);
-            return "Articulo eliminado exitosamente";
+            return "Articulo desactivado exitosamente";
         }
         return "articulo no encontrado";
     }
@@ -122,5 +124,21 @@ public class ReporteServiceImpl implements ReporteService {
                 reportesPendientes,
                 reportesAtendidos
         );
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Override
+    public GetReporte descartarReporte(Long id) {
+        Reporte reporte = reporteRepository.findById(id)
+                .orElseThrow(() -> new ReporteNotFoundException("Error al descartar el reporte, no existe en BD"));
+
+        reporte.setEstado(EstadoReporte.DESCARTADO);
+        return reporteMapper.toGetReporte(reporteRepository.save(reporte));
+    }
+
+    @Override
+    public Page<GetReporte> getAllReportesActivos(Pageable pageable) {
+        return reporteRepository.findAllByEstado(EstadoReporte.ACTIVO, pageable)
+                .map(r -> reporteMapper.toGetReporte(r));
     }
 }
