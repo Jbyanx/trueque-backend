@@ -13,4 +13,6 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
     Page<Persona> findAllByNombreContainingIgnoreCase(String nombre, Pageable pageable);
     Optional<Persona> findByCorreoEqualsIgnoreCase(String correo);
     Optional<Persona> getPersonaByCorreoEqualsIgnoreCase(String correo);
+
+    Boolean existsByCorreoIgnoreCase(String correo);
 }
