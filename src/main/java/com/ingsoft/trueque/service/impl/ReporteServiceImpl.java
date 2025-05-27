@@ -91,6 +91,7 @@ public class ReporteServiceImpl implements ReporteService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public String desactivarArticuloReportado(Long idReporte) {
         Reporte reporte = reporteRepository.findById(idReporte)
