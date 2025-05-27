@@ -142,7 +142,7 @@ public class ArticuloController {
     }
 
     @PutMapping("/{id}/cambiar-estado")
-    public ResponseEntity<GetArticulo> cambiarEstadoArticulo(@PathVariable @Parameter Long id, @ModelAttribute @Parameter EstadoArticulo estado){
+    public ResponseEntity<GetArticulo> cambiarEstadoArticulo(@PathVariable @Parameter Long id, @RequestParam EstadoArticulo estado){
         GetArticulo articulo = articuloService.cambiarEstadoArticulo(id, estado);
         return ResponseEntity.ok(articulo);
     }
