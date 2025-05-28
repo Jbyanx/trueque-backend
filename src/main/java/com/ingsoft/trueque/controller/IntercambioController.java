@@ -61,6 +61,12 @@ public class IntercambioController {
         return ResponseEntity.ok(intercambioService.getIntercambiosByUsuarioIdAndEstado(usuarioId, estado));
     }
 
+    @GetMapping("/usuarios/solicitudes-recibidas/{usuarioId}")
+    public ResponseEntity<List<GetIntercambio>> getIntercambiosByUsuarioDosIdAndEstado(@Parameter @PathVariable Long usuarioId,
+                                                                                    @Parameter @RequestParam(required = false) EstadoIntercambio estado){
+        return ResponseEntity.ok(intercambioService.getIntercambiosByUsuarioDosIdAndEstado(usuarioId, estado));
+    }
+
     @GetMapping("/todos-mis-intercambios")
     public ResponseEntity<Page<GetIntercambio>> obtenerTodosMisIntercambios(@ParameterObject Pageable pageable){
         return ResponseEntity.ok(intercambioService.getMisIntercambios(pageable));

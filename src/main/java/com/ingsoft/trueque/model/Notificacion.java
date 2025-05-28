@@ -28,4 +28,6 @@ public class Notificacion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
     private Usuario receptor;
+
+
 }

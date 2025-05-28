@@ -56,6 +56,20 @@ public class IntercambioServiceImpl implements IntercambioService {
         return intercambioMapper.toGetIntercambioList(historial);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('USUARIO')")
+    @Override
+    public List<GetIntercambio> getIntercambiosByUsuarioDosIdAndEstado(Long id, EstadoIntercambio estadoIntercambio) {
+        List<Intercambio> historial;
+        if(estadoIntercambio != null){
+            historial = intercambioRepository.getIntercambiosByUsuarioDosIdAndEstado(id, estadoIntercambio);
+        }else{
+            historial = intercambioRepository.getAllIntercambiosByUsuarioId(id);
+        }
+        return intercambioMapper.toGetIntercambioList(historial);
+    }
+
+
+
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetIntercambio getIntercambioById(Long id) {
@@ -93,7 +107,7 @@ public class IntercambioServiceImpl implements IntercambioService {
 
 
             SaveNotificacion notificacion = new SaveNotificacion(
-                    "¡Tienes una negociacion de intercambio!"+
+                    "¡Tienes una negociacion de intercambio! "+
                             propietario.getNombre() + " te ha propuesto negociar con otro articulo."
                     , intercambioToSave.getUsuarioDos().getId()
             );
@@ -102,7 +116,7 @@ public class IntercambioServiceImpl implements IntercambioService {
         } else{
 
             SaveNotificacion notificacion = new SaveNotificacion(
-                    "¡Tienes una nueva solicitud!"+
+                    "¡Tienes una nueva solicitud! "+
                             propietario.getNombre() + " te ha propuesto un intercambio."                    , intercambioToSave.getUsuarioDos().getId()
             );
 
