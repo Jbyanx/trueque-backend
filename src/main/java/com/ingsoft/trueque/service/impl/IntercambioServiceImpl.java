@@ -102,7 +102,7 @@ public class IntercambioServiceImpl implements IntercambioService {
         } else{
 
             SaveNotificacion notificacion = new SaveNotificacion(
-                    "¡Tienes una nueva solicitud!"+
+                    "¡Tienes una nueva solicitud! "+
                             propietario.getNombre() + " te ha propuesto un intercambio."                    , intercambioToSave.getUsuarioDos().getId()
             );
 
