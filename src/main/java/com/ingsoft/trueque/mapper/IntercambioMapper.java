@@ -11,12 +11,12 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface IntercambioMapper {
-    @Mapping(target = "usuarioUno", source = "usuarioUno.nombre")
+    @Mapping(target = "usuarioUno", source = "usuarioUno.id")
     @Mapping(target = "telefonoUsuarioUno", source = "usuarioUno.telefono")
-    @Mapping(target = "usuarioDos", source = "usuarioDos.nombre")
+    @Mapping(target = "usuarioDos", source = "usuarioDos.id")
     @Mapping(target = "telefonoUsuarioDos", source = "usuarioDos.telefono")
-    @Mapping(target = "articuloUno", source = "articuloUno.nombre")
-    @Mapping(target = "articuloDos", source = "articuloDos.nombre")
+    @Mapping(target = "articuloUno", source = "articuloUno.id")
+    @Mapping(target = "articuloDos", source = "articuloDos.id")
     @Mapping(target = "idIntercambioPadre", source = "intercambioPadre.id")
     GetIntercambio toGetIntercambio(Intercambio intercambio);
 
@@ -27,10 +27,10 @@ public interface IntercambioMapper {
     //@Mapping(target = "intercambioPadre.id", source = "idIntercambioPadre")
     Intercambio toIntercambio(SaveIntercambio saveIntercambio);
 
-    @Mapping(target = "usuarioUno", source = "usuarioUno.nombre")
-    @Mapping(target = "usuarioDos", source = "usuarioDos.nombre")
-    @Mapping(target = "articuloUno", source = "articuloUno.nombre")
-    @Mapping(target = "articuloDos", source = "articuloDos.nombre")
+    @Mapping(target = "usuarioUno", source = "usuarioUno.id")
+    @Mapping(target = "usuarioDos", source = "usuarioDos.id")
+    @Mapping(target = "articuloUno", source = "articuloUno.id")
+    @Mapping(target = "articuloDos", source = "articuloDos.id")
     GetIntercambioSimple toGetIntercambioSimple(Intercambio intercambio);
 
     List<GetIntercambio> toGetIntercambioList(List<Intercambio> intercambioList);
