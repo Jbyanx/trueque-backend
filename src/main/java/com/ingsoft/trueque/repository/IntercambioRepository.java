@@ -20,6 +20,8 @@ public interface IntercambioRepository extends JpaRepository<Intercambio, Long> 
     @Query("select i from Intercambio i where (i.usuarioUno = ?1 or i.usuarioDos = ?1) and i.estado = ?2")
     List<Intercambio> getIntercambiosByUsuarioIdAndEstado(Long idUsuario, EstadoIntercambio estado);
 
+    @Query("select i from Intercambio i where i.usuarioDos.id = ?1 and i.estado = ?2")
+    List<Intercambio> getIntercambiosByUsuarioDosIdAndEstado(Long idUsuarioDos, EstadoIntercambio estado);
 
     @Query("select i from Intercambio i where i.usuarioUno = ?1 or i.usuarioDos = ?1")
     List<Intercambio> getAllIntercambiosByUsuarioId(Long id);

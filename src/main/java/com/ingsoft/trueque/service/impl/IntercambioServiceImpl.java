@@ -56,6 +56,20 @@ public class IntercambioServiceImpl implements IntercambioService {
         return intercambioMapper.toGetIntercambioList(historial);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('USUARIO')")
+    @Override
+    public List<GetIntercambio> getIntercambiosByUsuarioDosIdAndEstado(Long id, EstadoIntercambio estadoIntercambio) {
+        List<Intercambio> historial;
+        if(estadoIntercambio != null){
+            historial = intercambioRepository.getIntercambiosByUsuarioDosIdAndEstado(id, estadoIntercambio);
+        }else{
+            historial = intercambioRepository.getAllIntercambiosByUsuarioId(id);
+        }
+        return intercambioMapper.toGetIntercambioList(historial);
+    }
+
+
+
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public GetIntercambio getIntercambioById(Long id) {

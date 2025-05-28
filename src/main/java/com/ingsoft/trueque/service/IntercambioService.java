@@ -12,6 +12,7 @@ public interface IntercambioService {
 
     Page<GetIntercambio> getAllIntercambios(Pageable pageable);
     List<GetIntercambio> getIntercambiosByUsuarioIdAndEstado(Long id, EstadoIntercambio estadoIntercambio);
+    List<GetIntercambio> getIntercambiosByUsuarioDosIdAndEstado(Long id, EstadoIntercambio estadoIntercambio);
     GetIntercambio getIntercambioById(Long id);
     GetIntercambio updateEstadoById(Long id, EstadoIntercambio estado);
     void deleteIntercambioById(Long id);
