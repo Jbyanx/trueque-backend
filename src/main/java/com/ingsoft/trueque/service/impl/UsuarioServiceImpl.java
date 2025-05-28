@@ -52,7 +52,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findAll(pageable).map(usuarioMapper::toGetUsuario);
     }
 
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMINISTRADOR')")
+
     @Override
     public GetUsuario getUsuarioById(Long id) {
         return usuarioRepository.getUsuarioById(id)
