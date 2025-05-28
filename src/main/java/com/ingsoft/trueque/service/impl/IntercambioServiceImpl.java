@@ -93,7 +93,7 @@ public class IntercambioServiceImpl implements IntercambioService {
 
 
             SaveNotificacion notificacion = new SaveNotificacion(
-                    "¡Tienes una negociacion de intercambio!"+
+                    "¡Tienes una negociacion de intercambio! "+
                             propietario.getNombre() + " te ha propuesto negociar con otro articulo."
                     , intercambioToSave.getUsuarioDos().getId()
             );
