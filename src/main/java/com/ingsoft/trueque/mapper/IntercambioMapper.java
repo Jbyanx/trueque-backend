@@ -24,7 +24,7 @@ public interface IntercambioMapper {
     @Mapping(target = "usuarioDos.id", source = "idUsuarioDos")
     @Mapping(target = "articuloUno.id", source = "idArticuloUno")
     @Mapping(target = "articuloDos.id", source = "idArticuloDos")
-    @Mapping(target = "intercambioPadre.id", source = "idIntercambioPadre")
+    //@Mapping(target = "intercambioPadre.id", source = "idIntercambioPadre")
     Intercambio toIntercambio(SaveIntercambio saveIntercambio);
 
     @Mapping(target = "usuarioUno", source = "usuarioUno.nombre")
