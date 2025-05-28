@@ -233,7 +233,7 @@ public class IntercambioServiceImpl implements IntercambioService {
             throw new AccesoNoPermitidoException("solo los participantes y administradores pueden confirmar la entrega");
         }
 
-        if(intercambio.getConfirmadoPorUsuarioUno() && intercambio.getConfirmadoPorUsuarioDos()){
+        if(intercambio.isConfirmadoPorUsuarioUno() && intercambio.isConfirmadoPorUsuarioDos()){
             intercambio.setEstado(EstadoIntercambio.REALIZADO);
         }
 

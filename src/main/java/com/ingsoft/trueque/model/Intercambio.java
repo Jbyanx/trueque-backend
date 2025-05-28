@@ -50,9 +50,10 @@ public class Intercambio {
     private Intercambio intercambioPadre;
 
     @Column(nullable = false)
-    private Boolean confirmadoPorUsuarioUno;
+    private boolean confirmadoPorUsuarioUno;
 
     @Column(nullable = false)
-    private Boolean confirmadoPorUsuarioDos;
+    private boolean confirmadoPorUsuarioDos;
+
 
 }
