@@ -39,6 +39,7 @@ public class NotificacionServiceImpl implements NotificacionService {
 
         Notificacion notificacion = notificacionMapper.toNotificacion(saveNotificacion);
         notificacion.setReceptor(receptor);
+        notificacion.setLeida(false);
         Notificacion guardada = notificacionRepository.save(notificacion);
         GetNotificacion dto = notificacionMapper.toGetNotificacion(guardada);
 
